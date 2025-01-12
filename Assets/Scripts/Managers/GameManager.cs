@@ -6,9 +6,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public int _currentCharecterIndex = 0;
-    public string _targetWord;
+    public int _currentTry = 0;
+    public string _targetWord ="Apple";
     [Range(4, 6)]
-    [SerializeField] private int _wordLenght = 0;
+    [SerializeField] private int _wordLenght = 5;
     [SerializeField] private ManagerBase[] _managers;
 
     private void Reset()
@@ -66,12 +67,18 @@ public class GameManager : MonoBehaviour
     {
         var logic = GetManager<LogicManager>();
         var playArea = GetManager<PlayingAreaManager>();
+        var wordHistory = GetManager<WordHistoryManager>();
 
         var guessedWord = playArea.GetGuessedWord();
-        var feedback = logic.ValidateGuess(guessedWord, _targetWord);
+        var feedback = logic.ValidateGuess(_targetWord, guessedWord);
 
        playArea.SetFeedback(feedback);
         _currentCharecterIndex = 0;
+
+        wordHistory.SetFeedback(_currentTry, feedback);
+        //playArea.ResetCharecters();
+        _currentTry++;
+
     }
 
 

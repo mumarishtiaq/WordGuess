@@ -7,20 +7,20 @@ using UnityEngine.UI;
 
 public class PlayingAreaManager : ManagerBase
 {
-    [SerializeField] private List<CharecterEntity> _charecters;
+    [SerializeField] private List<CharacterEntity> _characters;
     [SerializeField] private Color _missingColor;
     [SerializeField] private Color _placedColor;
     [SerializeField] private Color _misPlacedColor;
 
     public override void ResolveReferences()
     {
-        var charectersHolder = transform.Find("CharectersHolders");
-        if(charectersHolder !=null && _charecters.Count != charectersHolder.childCount)
+        var charectersHolder = transform.Find("CharactersHolders");
+        if(charectersHolder !=null && _characters.Count != charectersHolder.childCount)
         {
-            _charecters = new List<CharecterEntity>();
+            _characters = new List<CharacterEntity>();
             for (int i = 0; i < charectersHolder.childCount; i++)
             {
-                _charecters.Add(GetCharecterEntity(charectersHolder.GetChild(i)));
+                _characters.Add(GetCharecterEntity(charectersHolder.GetChild(i)));
             }
         }
     }
@@ -29,20 +29,20 @@ public class PlayingAreaManager : ManagerBase
     {
         ResetCharecters();
     }
-    private CharecterEntity GetCharecterEntity(Transform t)
+    private CharacterEntity GetCharecterEntity(Transform t)
     {
-        return new CharecterEntity
+        return new CharacterEntity
         {
             CharTxt = t.GetComponentInChildren<TextMeshProUGUI>(),
-            Dash = t.Find("Dash").gameObject,
+            Dash = t.Find("Dash")?.gameObject,
             Validator = t.GetComponentInChildren<Image>(),
         };
     }
 
     [ContextMenu("Reset")]
-    private void ResetCharecters()
+    public void ResetCharecters()
     {
-        foreach (var ch in _charecters)
+        foreach (var ch in _characters)
         {
             ch.CharTxt.text = string.Empty;
             ch.Dash.SetActive(true);
@@ -52,20 +52,20 @@ public class PlayingAreaManager : ManagerBase
 
     public void OnInput(string key, int index)
     {
-        var ch = _charecters[index];
+        var ch = _characters[index];
         ch.CharTxt.text = key;
         ch.Dash.SetActive(false);
     }
     public void OnBackSpace(int index)
     {
-        var ch = _charecters[index];
+        var ch = _characters[index];
         ch.CharTxt.text = string.Empty;
         ch.Dash.SetActive(true);
     }
 
     public string GetGuessedWord()
     {
-        return _charecters?.Where(c => c.CharTxt != null)
+        return _characters?.Where(c => c.CharTxt != null)
                           .Select(c => c.CharTxt.text)
                           .Aggregate("", (current, next) => current + next) ?? string.Empty;
     }
@@ -74,7 +74,7 @@ public class PlayingAreaManager : ManagerBase
     {
         for (int i = 0; i < feedback.Length; i++)
         {
-            var c = _charecters[i];
+            var c = _characters[i];
             var f = feedback[i];
 
 
@@ -82,7 +82,7 @@ public class PlayingAreaManager : ManagerBase
         }
     }
 
-    private void SetValidator(CharecterEntity charecter,ValidationType validate = ValidationType.None)
+    private void SetValidator(CharacterEntity charecter,ValidationType validate = ValidationType.None)
     {
         bool state = validate != ValidationType.None;
         var color  = Color.white;
@@ -114,7 +114,7 @@ public class PlayingAreaManager : ManagerBase
 
 
 [System.Serializable]
-public class CharecterEntity
+public class CharacterEntity
 {
     public TextMeshProUGUI CharTxt;
     public GameObject Dash;
