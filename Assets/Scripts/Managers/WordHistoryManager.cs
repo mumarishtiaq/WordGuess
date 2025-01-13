@@ -10,7 +10,6 @@ public class WordHistoryManager : ManagerBase
     [SerializeField] private GameObject _wordTemplate;
     [SerializeField] private List<List<CharacterEntity>> _historyWords;
 
-    private PlayingAreaManager _playAreaManager;
     public override void ResolveReferences()
     {
         if (!_parent)
@@ -19,7 +18,10 @@ public class WordHistoryManager : ManagerBase
     public override void PerformActions()
     {
         PopulateWordHistory(6);
-        _playAreaManager = GameManager.Instance.GetManager<PlayingAreaManager>();
+    }
+    public override void ReInitialize()
+    {
+        PopulateWordHistory(6);
     }
 
     private void PopulateWordHistory(int numberOfTries)
@@ -55,22 +57,23 @@ public class WordHistoryManager : ManagerBase
         };
     }
 
-    public void SetFeedback(List<CharacterEntity> word, ValidationType[] feedback)
+    public void SetFeedback(List<CharacterEntity> word,string guessedWord, ValidationType[] feedback)
     {
         for (int i = 0; i < feedback.Length; i++)
         {
             var c = word[i];
             var f = feedback[i];
+            c.CharTxt.text = guessedWord[i].ToString();
             SetValidator(c, f);
         }
     }
 
-    public void SetFeedback(int currentTry, ValidationType[] feedback)
+    public void SetFeedback(int currentTry,string guessedWord, ValidationType[] feedback)
     {
         if(currentTry <_historyWords.Count)
         {
             var charecters = _historyWords[currentTry];
-            SetFeedback(charecters, feedback);
+            SetFeedback(charecters,guessedWord, feedback);
         }
     }
 

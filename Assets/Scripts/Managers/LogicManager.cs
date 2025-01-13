@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LogicManager : ManagerBase
@@ -7,12 +8,18 @@ public class LogicManager : ManagerBase
 
     public override void ResolveReferences()
     {
+        //TODO : not implemented yet, may use in future implementations
         
     }
 
     public override void PerformActions()
     {
-       
+        //TODO : not implemented yet, may use in future implementations
+
+    }
+    public override void ReInitialize()
+    {
+        //TODO : not implemented yet, may use in future implementations
     }
     public ValidationType[] ValidateGuess(string targetWord, string guessedWord)
     {
@@ -66,6 +73,11 @@ public class LogicManager : ManagerBase
         return feedback;
     }
 
+    public bool IsValidGuess(ValidationType[] feedback)
+    {
+        return feedback.All(f => f == ValidationType.Placed);
+    }
+
 
     #region Debugging
 
@@ -82,9 +94,6 @@ public class LogicManager : ManagerBase
             Debug.Log($"{guessedWord[i]} is {feedback[i]}");
         }
     }
-
-   
-
     #endregion Debugging
 
 

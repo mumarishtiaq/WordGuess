@@ -26,5 +26,10 @@ public class KeyboardManager : ManagerBase
         }
         _backSpaceBtn.onClick.AddListener(() => GameManager.Instance.OnBackSpace());
         _submitBtn.onClick.AddListener(() => GameManager.Instance.OnSubmit());
-    }    
+    }
+
+    public override void ReInitialize()
+    {
+        //TODO : code to set two negative keywords on game reinitialize
+    }
 }

@@ -996,7 +996,7 @@ GameObject:
   - component: {fileID: 198910601}
   - component: {fileID: 198910602}
   m_Layer: 5
-  m_Name: CharectersHolders
+  m_Name: CharactersHolders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1699,13 +1699,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentCharecterIndex: 0
-  _targetWord: 
-  _wordLenght: 0
+  _currentTry: 1
+  _targetWord: Apple
+  _wordLenght: 5
+  _totalTries: 6
   _managers:
-  - {fileID: 1054974141}
   - {fileID: 1011178498}
+  - {fileID: 1054974141}
   - {fileID: 1677891661}
   - {fileID: 1917809023}
+  _playArea: {fileID: 0}
+  _wordHistory: {fileID: 0}
+  _logic: {fileID: 0}
 --- !u!4 &270440442
 Transform:
   m_ObjectHideFlags: 0
@@ -9857,7 +9862,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522f2c0702b3f32419e42b965d2ff731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _characters: []
+  _characters:
+  - CharTxt: {fileID: 2094053299}
+    Dash: {fileID: 1716258438}
+    Validator: {fileID: 2061958100}
+  - CharTxt: {fileID: 2048656215}
+    Dash: {fileID: 486043204}
+    Validator: {fileID: 1730945932}
+  - CharTxt: {fileID: 1768029284}
+    Dash: {fileID: 2072420923}
+    Validator: {fileID: 1387917984}
+  - CharTxt: {fileID: 479317135}
+    Dash: {fileID: 572311865}
+    Validator: {fileID: 208068786}
+  - CharTxt: {fileID: 920717911}
+    Dash: {fileID: 966996285}
+    Validator: {fileID: 870604921}
   _missingColor: {r: 0.9150943, g: 0.15107687, b: 0.15107687, a: 1}
   _placedColor: {r: 0.14051618, g: 0.9245283, b: 0.06541473, a: 1}
   _misPlacedColor: {r: 0.9048746, g: 0.9245283, b: 0.18752226, a: 1}

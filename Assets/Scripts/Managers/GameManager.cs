@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -6,11 +7,36 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public int _currentCharecterIndex = 0;
-    public int _currentTry = 0;
-    public string _targetWord ="Apple";
+    public int _currentTry = 1;
+    public string _targetWord = "Apple";
     [Range(4, 6)]
     [SerializeField] private int _wordLenght = 5;
+    [SerializeField] private int _totalTries = 6;
+
+    public int WordLenght
+    {
+        get => _wordLenght;
+        set
+        {
+            _wordLenght = value;
+            _totalTries = value + 1;
+        }
+    } 
+    public int TotalTries
+    {
+        get => _totalTries;
+        set => _totalTries = value;
+
+    }
+
+
+
     [SerializeField] private ManagerBase[] _managers;
+
+    //managers
+    [SerializeField] private PlayingAreaManager _playArea;
+    [SerializeField] private WordHistoryManager _wordHistory;
+    [SerializeField] private LogicManager _logic;
 
     private void Reset()
     {
@@ -31,6 +57,14 @@ public class GameManager : MonoBehaviour
     private void PerformActions()
     {
         _managers.ToList().ForEach(manager => manager.PerformActions());
+
+        _playArea = GetManager<PlayingAreaManager>();
+        _wordHistory = GetManager<WordHistoryManager>();
+        _logic = GetManager<LogicManager>();
+    }
+    public void ReInitialize()
+    {
+        _managers.ToList().ForEach(manager => manager.ReInitialize());
     }
     public T GetManager<T>() where T : ManagerBase
     {
@@ -43,10 +77,7 @@ public class GameManager : MonoBehaviour
     {
         if (_currentCharecterIndex < _wordLenght)
         {
-            var playArea = GetManager<PlayingAreaManager>();
-
-            playArea.OnInput(key,_currentCharecterIndex);
-
+            _playArea.OnInput(key, _currentCharecterIndex);
             _currentCharecterIndex++;
         }
 
@@ -56,31 +87,49 @@ public class GameManager : MonoBehaviour
     {
         if (_currentCharecterIndex > 0)
         {
-            var playArea = GetManager<PlayingAreaManager>();
-
-            playArea.OnBackSpace(_currentCharecterIndex - 1);
+            _playArea.OnBackSpace(_currentCharecterIndex - 1);
             _currentCharecterIndex--;
         }
     }
 
     public void OnSubmit()
     {
-        var logic = GetManager<LogicManager>();
-        var playArea = GetManager<PlayingAreaManager>();
-        var wordHistory = GetManager<WordHistoryManager>();
+        var guessedWord = _playArea.GetGuessedWord();
+        var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
 
-        var guessedWord = playArea.GetGuessedWord();
-        var feedback = logic.ValidateGuess(_targetWord, guessedWord);
-
-       playArea.SetFeedback(feedback);
+        _playArea.SetFeedback(feedback);
         _currentCharecterIndex = 0;
 
-        wordHistory.SetFeedback(_currentTry, feedback);
-        //playArea.ResetCharecters();
-        _currentTry++;
+        if (_logic.IsValidGuess(feedback))
+        {
+            // win logic
+            Debug.Log("You Win");
+        }
+        else
+        {
+            _wordHistory.SetFeedback(_currentTry-1, guessedWord, feedback);
+            if (_currentTry < _totalTries)
+            {
+                StartCoroutine(Test());
+                _currentTry++;
+            }
+            else
+            {
+                Debug.Log("You lose");
+            }
+        }
+
+
+
+    }
+    private IEnumerator Test()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _playArea.ReInitialize();
 
     }
 
+    
 
 
 }

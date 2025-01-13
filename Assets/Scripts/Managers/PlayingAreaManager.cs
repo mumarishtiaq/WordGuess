@@ -29,6 +29,10 @@ public class PlayingAreaManager : ManagerBase
     {
         ResetCharecters();
     }
+    public override void ReInitialize()
+    {
+        ResetCharecters();
+    }
     private CharacterEntity GetCharecterEntity(Transform t)
     {
         return new CharacterEntity
@@ -39,8 +43,7 @@ public class PlayingAreaManager : ManagerBase
         };
     }
 
-    [ContextMenu("Reset")]
-    public void ResetCharecters()
+    private void ResetCharecters()
     {
         foreach (var ch in _characters)
         {
