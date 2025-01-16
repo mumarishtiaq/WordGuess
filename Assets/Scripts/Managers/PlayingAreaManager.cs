@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,7 @@ public class PlayingAreaManager : ManagerBase
                           .Aggregate("", (current, next) => current + next) ?? string.Empty;
     }
 
-    public void SetFeedback(ValidationType[] feedback)
+    public IEnumerator SetFeedback(ValidationType[] feedback,Action onComplete= null)
     {
         for (int i = 0; i < feedback.Length; i++)
         {
@@ -82,7 +83,10 @@ public class PlayingAreaManager : ManagerBase
 
 
             SetValidator(c, f);
+            yield return new WaitForSeconds(0.5f);
+
         }
+        onComplete?.Invoke();
     }
 
     private void SetValidator(CharacterEntity charecter,ValidationType validate = ValidationType.None)

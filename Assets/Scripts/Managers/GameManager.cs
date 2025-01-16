@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
             _wordLenght = value;
             _totalTries = value + 1;
         }
-    } 
+    }
     public int TotalTries
     {
         get => _totalTries;
@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
 
     private void PerformActions()
     {
+        WordLenght = 5;
         _managers.ToList().ForEach(manager => manager.PerformActions());
 
         _playArea = GetManager<PlayingAreaManager>();
@@ -97,27 +98,32 @@ public class GameManager : MonoBehaviour
         var guessedWord = _playArea.GetGuessedWord();
         var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
 
-        _playArea.SetFeedback(feedback);
-        _currentCharecterIndex = 0;
+        StartCoroutine(_playArea.SetFeedback(feedback, () =>
+        {
 
-        if (_logic.IsValidGuess(feedback))
-        {
-            // win logic
-            Debug.Log("You Win");
-        }
-        else
-        {
-            _wordHistory.SetFeedback(_currentTry-1, guessedWord, feedback);
-            if (_currentTry < _totalTries)
+            Debug.Log("Processing complete");
+
+            _currentCharecterIndex = 0;
+
+            if (_logic.IsValidGuess(feedback))
             {
-                StartCoroutine(Test());
-                _currentTry++;
+                // win logic
+                Debug.Log("You Win");
             }
             else
             {
-                Debug.Log("You lose");
+                _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
+                if (_currentTry < _totalTries)
+                {
+                    StartCoroutine(Test());
+                    _currentTry++;
+                }
+                else
+                {
+                    Debug.Log("You lose");
+                }
             }
-        }
+        }));
 
 
 
@@ -129,7 +135,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    
+
 
 
 }
