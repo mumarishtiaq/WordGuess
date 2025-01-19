@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 
 public class PlayingAreaManager : ManagerBase
 {
+    [SerializeField] private Transform _charectersHolder;
     [SerializeField] private List<CharacterEntity> _characters;
     [SerializeField] private Color _missingColor;
     [SerializeField] private Color _placedColor;
@@ -15,13 +17,15 @@ public class PlayingAreaManager : ManagerBase
 
     public override void ResolveReferences()
     {
-        var charectersHolder = transform.Find("CharactersHolders");
-        if(charectersHolder !=null && _characters.Count != charectersHolder.childCount)
+        if (!_charectersHolder)
+            _charectersHolder = transform.Find("CharactersHolders");
+
+        if (_charectersHolder != null && _characters.Count != _charectersHolder.childCount)
         {
             _characters = new List<CharacterEntity>();
-            for (int i = 0; i < charectersHolder.childCount; i++)
+            for (int i = 0; i < _charectersHolder.childCount; i++)
             {
-                _characters.Add(GetCharecterEntity(charectersHolder.GetChild(i)));
+                _characters.Add(GetCharecterEntity(_charectersHolder.GetChild(i)));
             }
         }
     }
@@ -66,7 +70,6 @@ public class PlayingAreaManager : ManagerBase
         ch.CharTxt.text = string.Empty;
         ch.Dash.SetActive(true);
     }
-
     public string GetGuessedWord()
     {
         return _characters?.Where(c => c.CharTxt != null)
@@ -74,7 +77,7 @@ public class PlayingAreaManager : ManagerBase
                           .Aggregate("", (current, next) => current + next) ?? string.Empty;
     }
 
-    public IEnumerator SetFeedback(ValidationType[] feedback,Action onComplete= null)
+    public IEnumerator SetFeedback(ValidationType[] feedback, Action onComplete = null)
     {
         for (int i = 0; i < feedback.Length; i++)
         {
@@ -83,16 +86,18 @@ public class PlayingAreaManager : ManagerBase
 
 
             SetValidator(c, f);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.3f);
 
         }
+        yield return new WaitForSeconds(0.2f);
         onComplete?.Invoke();
     }
 
-    private void SetValidator(CharacterEntity charecter,ValidationType validate = ValidationType.None)
+    private void SetValidator(CharacterEntity charecter, ValidationType validate = ValidationType.None)
     {
         bool state = validate != ValidationType.None;
-        var color  = Color.white;
+        var color = Color.white;
+        var validator = charecter.Validator;
 
         switch (validate)
         {
@@ -109,14 +114,56 @@ public class PlayingAreaManager : ManagerBase
                 break;
         }
 
-        
-        charecter.Validator.color = color;
-        charecter.Validator.gameObject.SetActive(state);
+        validator.color = color;
+        if (state)
+        {
+            validator.DOKill();
+            validator.transform.DOScale(1.3f, 0.3f).
+           OnComplete(() =>
+           {
+               validator.transform.DOScale(1f, 0.3f);
+           });
+        }
+        else
+            validator.transform.localScale = Vector3.zero;
     }
 
+    public void AnimateFeedback(Transform target, Action OnComplete)
+    {
+        var charectersToCopy = _charectersHolder.gameObject;
 
-    
+        var copiedCharecters = Instantiate(charectersToCopy, transform);
+        
+      
+        copiedCharecters.transform.DOScale(1.05f, 1).
+            OnComplete(() =>
+            {
+                ResetCharecters();
+                var rect = copiedCharecters.GetComponent<RectTransform>();
+                var targetRect = target.GetComponent<RectTransform>();
+
+                var localPos = GetTargetPosition(targetRect, rect);
+
+                copiedCharecters.transform.DOScale(0.4f, 1);
+                rect.DOLocalMove(localPos, 1).SetEase(Ease.OutBack).
+                     OnComplete(() =>
+                     {
+                         OnComplete?.Invoke();
+                         Destroy(copiedCharecters);
+                     });
+               
+            });
+    }
+
+    private Vector2 GetTargetPosition(RectTransform source, RectTransform target)
+    {
+        Vector3 worldPosition = source.position;
+        var localPos = target.parent.InverseTransformPoint(worldPosition);
+        return new Vector2(localPos.x+40,localPos.y);
+    }
+
 }
+
 
 
 

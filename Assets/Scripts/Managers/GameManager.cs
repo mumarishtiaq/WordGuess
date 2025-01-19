@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
 
             Debug.Log("Processing complete");
 
-            _currentCharecterIndex = 0;
+            
 
             if (_logic.IsValidGuess(feedback))
             {
@@ -112,27 +112,22 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
-                if (_currentTry < _totalTries)
+                _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), ()=>
                 {
-                    StartCoroutine(Test());
-                    _currentTry++;
-                }
-                else
-                {
-                    Debug.Log("You lose");
-                }
+
+                    _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
+                    if (_currentTry < _totalTries)
+                        _currentTry++;
+                    
+                    else
+                    {
+                        Debug.Log("You lose");
+                    }
+                    _currentCharecterIndex = 0;
+                });
+
             }
         }));
-
-
-
-    }
-    private IEnumerator Test()
-    {
-        yield return new WaitForSeconds(0.5f);
-        _playArea.ReInitialize();
-
     }
 
 
