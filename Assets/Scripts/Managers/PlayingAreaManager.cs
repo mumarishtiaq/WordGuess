@@ -14,6 +14,7 @@ public class PlayingAreaManager : ManagerBase
     [SerializeField] private Color _missingColor;
     [SerializeField] private Color _placedColor;
     [SerializeField] private Color _misPlacedColor;
+    public GameObject particle;
 
     public override void ResolveReferences()
     {
@@ -160,6 +161,12 @@ public class PlayingAreaManager : ManagerBase
         Vector3 worldPosition = source.position;
         var localPos = target.parent.InverseTransformPoint(worldPosition);
         return new Vector2(localPos.x+40,localPos.y);
+    }
+
+    public void Test()
+    {
+        particle.transform.position = _characters[0].CharTxt.transform.position;
+        particle.SetActive(true);
     }
 
 }

@@ -44,28 +44,46 @@ public class AlphabetButtonAssignerWindow : EditorWindow
             return;
         }
 
-        // Get all Button components in children of the parent object
         Button[] buttons = parentObject.GetComponentsInChildren<Button>();
 
-       
+        int layoutIndex = 0; // Index to track the current position in the keyboardLayout
 
-        // Assign letters to buttons
-        for (int i = 0; i < keyboardLayout.Length; i++)
+        for (int i = 0; i < buttons.Length; i++)
         {
-            string letter = keyboardLayout[i].ToString();
-            buttons[i].name = $"Button_{letter}";
+            // Check if the button should be excluded (e.g., based on a specific tag or name)
+            if (buttons[i].CompareTag("NonKeyboardButton")) // Assuming non-keyboard buttons are tagged as "NonKeyboardButton"
+            {
+                Debug.Log($"Skipping button at index {i} as it's not part of the keyboard layout.");
+                continue;
+            }
 
-            // Assign the text to the button's Text component
+            // Ensure layoutIndex does not exceed the length of the keyboardLayout
+            if (layoutIndex >= keyboardLayout.Length)
+            {
+                Debug.LogWarning("Not enough letters in the keyboard layout to assign to all buttons.");
+                break;
+            }
+
+            // Assign the letter to the button if it has a TextMeshProUGUI component
             TextMeshProUGUI buttonText = buttons[i].GetComponentInChildren<TextMeshProUGUI>();
             if (buttonText != null)
             {
+                string letter = keyboardLayout[layoutIndex].ToString();
                 buttonText.text = letter;
+                buttons[i].name = $"Button_{letter}";
+
+                layoutIndex++; // Increment the layout index only for valid assignments
+                var clickPopTxt = buttons[i].transform.Find("OnClickPop")?.GetComponentInChildren<TextMeshProUGUI>();
+
+                clickPopTxt.text = letter;
+
             }
             else
             {
-                Debug.LogWarning($"Button {buttons[i].name} does not have a Text component to set the text!");
+                Debug.LogWarning($"Button at index {i} does not have a TextMeshProUGUI component and will be skipped.");
             }
         }
+
 
         Debug.Log("Alphabet assigned to buttons successfully.");
     }

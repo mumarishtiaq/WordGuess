@@ -17,11 +17,11 @@ public class WordHistoryManager : ManagerBase
     }
     public override void PerformActions()
     {
-        PopulateWordHistory(GameManager.Instance.TotalTries);
+        PopulateWordHistory(WordGuess.GameManager.Instance.TotalTries);
     }
     public override void ReInitialize()
     {
-        PopulateWordHistory(GameManager.Instance.TotalTries);
+        PopulateWordHistory(WordGuess.GameManager.Instance.TotalTries);
     }
 
     private void PopulateWordHistory(int numberOfTries)

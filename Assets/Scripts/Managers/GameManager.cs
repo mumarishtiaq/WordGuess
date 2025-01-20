@@ -3,134 +3,137 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace WordGuess
 {
-    public static GameManager Instance;
-    public int _currentCharecterIndex = 0;
-    public int _currentTry = 1;
-    public string _targetWord = "Apple";
-    [Range(4, 6)]
-    [SerializeField] private int _wordLenght = 5;
-    [SerializeField] private int _totalTries = 6;
-
-    public int WordLenght
+    public class GameManager : MonoBehaviour
     {
-        get => _wordLenght;
-        set
+        public static GameManager Instance;
+        public int _currentCharecterIndex = 0;
+        public int _currentTry = 1;
+        public string _targetWord = "Apple";
+        [Range(4, 6)]
+        [SerializeField] private int _wordLenght = 5;
+        [SerializeField] private int _totalTries = 6;
+
+        public int WordLenght
         {
-            _wordLenght = value;
-            _totalTries = value + 1;
-        }
-    }
-    public int TotalTries
-    {
-        get => _totalTries;
-        set => _totalTries = value;
-
-    }
-
-
-
-    [SerializeField] private ManagerBase[] _managers;
-
-    //managers
-    [SerializeField] private PlayingAreaManager _playArea;
-    [SerializeField] private WordHistoryManager _wordHistory;
-    [SerializeField] private LogicManager _logic;
-
-    private void Reset()
-    {
-        ResolveReferences();
-    }
-
-    private void Awake()
-    {
-        Instance = this;
-        PerformActions();
-    }
-    private void ResolveReferences()
-    {
-        _managers = FindObjectsOfType<ManagerBase>();
-        _managers.ToList().ForEach(manager => manager.ResolveReferences());
-    }
-
-    private void PerformActions()
-    {
-        WordLenght = 5;
-        _managers.ToList().ForEach(manager => manager.PerformActions());
-
-        _playArea = GetManager<PlayingAreaManager>();
-        _wordHistory = GetManager<WordHistoryManager>();
-        _logic = GetManager<LogicManager>();
-    }
-    public void ReInitialize()
-    {
-        _managers.ToList().ForEach(manager => manager.ReInitialize());
-    }
-    public T GetManager<T>() where T : ManagerBase
-    {
-        return _managers.OfType<T>().FirstOrDefault();
-    }
-
-
-
-    public void OnKeyPress(string key)
-    {
-        if (_currentCharecterIndex < _wordLenght)
-        {
-            _playArea.OnInput(key, _currentCharecterIndex);
-            _currentCharecterIndex++;
-        }
-
-    }
-
-    public void OnBackSpace()
-    {
-        if (_currentCharecterIndex > 0)
-        {
-            _playArea.OnBackSpace(_currentCharecterIndex - 1);
-            _currentCharecterIndex--;
-        }
-    }
-
-    public void OnSubmit()
-    {
-        var guessedWord = _playArea.GetGuessedWord();
-        var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
-
-        StartCoroutine(_playArea.SetFeedback(feedback, () =>
-        {
-
-            Debug.Log("Processing complete");
-
-            
-
-            if (_logic.IsValidGuess(feedback))
+            get => _wordLenght;
+            set
             {
-                // win logic
-                Debug.Log("You Win");
+                _wordLenght = value;
+                _totalTries = value + 1;
             }
-            else
+        }
+        public int TotalTries
+        {
+            get => _totalTries;
+            set => _totalTries = value;
+
+        }
+
+
+
+        [SerializeField] private ManagerBase[] _managers;
+
+        //managers
+        [SerializeField] private PlayingAreaManager _playArea;
+        [SerializeField] private WordHistoryManager _wordHistory;
+        [SerializeField] private LogicManager _logic;
+
+        private void Reset()
+        {
+            ResolveReferences();
+        }
+
+        private void Awake()
+        {
+            Instance = this;
+            PerformActions();
+        }
+        private void ResolveReferences()
+        {
+            _managers = FindObjectsOfType<ManagerBase>();
+            _managers.ToList().ForEach(manager => manager.ResolveReferences());
+        }
+
+        private void PerformActions()
+        {
+            WordLenght = 5;
+            _managers.ToList().ForEach(manager => manager.PerformActions());
+
+            _playArea = GetManager<PlayingAreaManager>();
+            _wordHistory = GetManager<WordHistoryManager>();
+            _logic = GetManager<LogicManager>();
+        }
+        public void ReInitialize()
+        {
+            _managers.ToList().ForEach(manager => manager.ReInitialize());
+        }
+        public T GetManager<T>() where T : ManagerBase
+        {
+            return _managers.OfType<T>().FirstOrDefault();
+        }
+
+
+
+        public void OnKeyPress(string key)
+        {
+            if (_currentCharecterIndex < _wordLenght)
             {
-                _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), ()=>
+                _playArea.OnInput(key, _currentCharecterIndex);
+                _currentCharecterIndex++;
+            }
+
+        }
+
+        public void OnBackSpace()
+        {
+            if (_currentCharecterIndex > 0)
+            {
+                _playArea.OnBackSpace(_currentCharecterIndex - 1);
+                _currentCharecterIndex--;
+            }
+        }
+
+        public void OnSubmit()
+        {
+            var guessedWord = _playArea.GetGuessedWord();
+            var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
+
+            StartCoroutine(_playArea.SetFeedback(feedback, () =>
+            {
+
+                Debug.Log("Processing complete");
+
+
+
+                if (_logic.IsValidGuess(feedback))
                 {
-
-                    _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
-                    if (_currentTry < _totalTries)
-                        _currentTry++;
-                    
-                    else
+                    // win logic
+                    Debug.Log("You Win");
+                }
+                else
+                {
+                    _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), () =>
                     {
-                        Debug.Log("You lose");
-                    }
-                    _currentCharecterIndex = 0;
-                });
 
-            }
-        }));
+                        _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
+                        if (_currentTry < _totalTries)
+                            _currentTry++;
+
+                        else
+                        {
+                            Debug.Log("You lose");
+                        }
+                        _currentCharecterIndex = 0;
+                    });
+
+                }
+            }));
+        }
+
+
+
+
     }
-
-
-
-
 }
