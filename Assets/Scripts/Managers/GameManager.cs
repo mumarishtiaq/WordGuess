@@ -39,6 +39,7 @@ namespace WordGuess
         [SerializeField] private PlayingAreaManager _playArea;
         [SerializeField] private WordHistoryManager _wordHistory;
         [SerializeField] private LogicManager _logic;
+        [SerializeField] private AudioManager _audio;
 
         private void Reset()
         {
@@ -64,6 +65,7 @@ namespace WordGuess
             _playArea = GetManager<PlayingAreaManager>();
             _wordHistory = GetManager<WordHistoryManager>();
             _logic = GetManager<LogicManager>();
+            _audio = GetManager<AudioManager>();
         }
         public void ReInitialize()
         {
@@ -83,6 +85,7 @@ namespace WordGuess
                 _playArea.OnInput(key, _currentCharecterIndex);
                 _currentCharecterIndex++;
             }
+                _audio.PlayKeyBoardButtonSound();
 
         }
 
@@ -93,6 +96,7 @@ namespace WordGuess
                 _playArea.OnBackSpace(_currentCharecterIndex - 1);
                 _currentCharecterIndex--;
             }
+                _audio.PlayKeyBoardButtonSound();
         }
 
         public void OnSubmit()
