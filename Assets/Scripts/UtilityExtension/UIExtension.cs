@@ -19,10 +19,9 @@ public static class UIExtension
         TextMeshProUGUI textComponent = button.GetComponentInChildren<TextMeshProUGUI>();
         return textComponent.text;
     }
-
-    public static void SetText(this TextMeshProUGUI textMesh, string txt)
+    public static void SetSprite(this Button button,Sprite sprite)
     {
-        if (textMesh != null)
-            textMesh.text = txt;
+        Image img = button.GetComponent<Image>();
+        img.sprite = sprite;
     }
 }

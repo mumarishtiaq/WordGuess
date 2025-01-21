@@ -72,8 +72,7 @@ namespace WordGuess
 
             JsonConnector.LoadWordsFromJSON(() =>
             {
-                (_targetWord, _currentSearchableWords) = JsonConnector.GetRandomWord();
-
+                _targetWord = JsonConnector.GetRandomWord();
             });
         }
         public void ReInitialize()
@@ -96,6 +95,22 @@ namespace WordGuess
             }
             _audio.PlayKeyBoardButtonSound();
 
+
+            var keyboard = GetManager<KeyboardManager>();
+
+            bool validLenght = _currentCharecterIndex == _wordLenght;
+            bool isValid = true;
+            if (validLenght)
+            {
+                var guessedWord = _playArea.GetGuessedWord();
+                _currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
+
+               isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
+            }
+            keyboard.OnValidateGuessWord(validLenght, isValid);
+
+            
+
         }
 
         public void OnBackSpace()
@@ -106,10 +121,24 @@ namespace WordGuess
                 _currentCharecterIndex--;
             }
             _audio.PlayKeyBoardButtonSound();
+
+            var keyboard = GetManager<KeyboardManager>();
+
+            bool validLenght = _currentCharecterIndex == _wordLenght;
+            bool isValid = true;
+            if (validLenght)
+            {
+                var guessedWord = _playArea.GetGuessedWord();
+                _currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
+
+                isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
+            }
+            keyboard.OnValidateGuessWord(validLenght, isValid);
         }
 
         public void OnSubmit()
         {
+            
             var guessedWord = _playArea.GetGuessedWord();
             var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
 

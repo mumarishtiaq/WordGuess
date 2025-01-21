@@ -16984,6 +16984,8 @@ MonoBehaviour:
   _hintBtn: {fileID: 964694037}
   _backSpaceBtn: {fileID: 178175735}
   _submitBtn: {fileID: 1215208397}
+  _enableSprite: {fileID: 21300000, guid: 6d7b3837cad97fb44b32242107cab096, type: 3}
+  _disableSprite: {fileID: 21300000, guid: 2c1ebeaefc3c21d4fba99b76cc45aa79, type: 3}
 --- !u!1 &1014524571
 GameObject:
   m_ObjectHideFlags: 0
@@ -28161,7 +28163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data:
-  - Letter: A
+  - Letter: 
     Words:
     - ABACA
     - ABACK
@@ -28625,7 +28627,7 @@ MonoBehaviour:
     - AZURE
     - AZURN
     - AZYME
-  - Letter: B
+  - Letter: 
     Words:
     - BABEL
     - BABOO
@@ -29055,7 +29057,7 @@ MonoBehaviour:
     - BYSSI
     - BYLAW
     - BYWAY
-  - Letter: C
+  - Letter: 
     Words:
     - CAABA
     - CABAL
@@ -29545,7 +29547,7 @@ MonoBehaviour:
     - CYMRY
     - CYNIC
     - CZECH
-  - Letter: D
+  - Letter: 
     Words:
     - DADLE
     - DADDY
@@ -29833,7 +29835,7 @@ MonoBehaviour:
     - DWINE
     - DYAKS
     - DYNAM
-  - Letter: E
+  - Letter: 
     Words:
     - EAGER
     - EAGLE
@@ -30034,7 +30036,7 @@ MonoBehaviour:
     - EYREN
     - EYGHT
     - EYRIE
-  - Letter: F
+  - Letter: 
     Words:
     - FABLE
     - FACED
@@ -30367,7 +30369,7 @@ MonoBehaviour:
     - FUSTY
     - FUZZY
     - FYTTE
-  - Letter: G
+  - Letter: 
     Words:
     - GABEL
     - GABLE
@@ -30660,7 +30662,7 @@ MonoBehaviour:
     - GYRAL
     - GYRON
     - GYRUS
-  - Letter: H
+  - Letter: 
     Words:
     - HABIT
     - HABLE
@@ -30878,7 +30880,7 @@ MonoBehaviour:
     - HYRST
     - HYSON
     - HYTHE
-  - Letter: I
+  - Letter: 
     Words:
     - IAMBI
     - ICING
@@ -30988,7 +30990,7 @@ MonoBehaviour:
     - IXTLE
     - IXTLI
     - IZARD
-  - Letter: J
+  - Letter: 
     Words:
     - JABOT
     - JACOB
@@ -31070,7 +31072,7 @@ MonoBehaviour:
     - JUTES
     - JUTTY
     - JUVIA
-  - Letter: K
+  - Letter: 
     Words:
     - KAAMA
     - KABOB
@@ -31166,7 +31168,7 @@ MonoBehaviour:
     - KYMRY
     - KYRIE
     - KYTHE
-  - Letter: L
+  - Letter: 
     Words:
     - LABEL
     - LABIA
@@ -31434,7 +31436,7 @@ MonoBehaviour:
     - LYSSA
     - LYTHE
     - LYTTA
-  - Letter: M
+  - Letter: 
     Words:
     - MABBY
     - MACAO
@@ -31767,7 +31769,7 @@ MonoBehaviour:
     - MYRRH
     - MYSIS
     - MYTHS
-  - Letter: N
+  - Letter: 
     Words:
     - NIERE
     - NEYNE
@@ -31925,7 +31927,7 @@ MonoBehaviour:
     - NUTTY
     - NYMPH
     - NYULA
-  - Letter: O
+  - Letter: 
     Words:
     - OAKEN
     - OAKER
@@ -32067,7 +32069,7 @@ MonoBehaviour:
     - OYLET
     - OZENA
     - OZONE
-  - Letter: P
+  - Letter: 
     Words:
     - PACHA
     - PAAGE
@@ -32485,7 +32487,7 @@ MonoBehaviour:
     - PYRUS
     - PYXLE
     - PYXIS
-  - Letter: Q
+  - Letter: 
     Words:
     - QUACK
     - QUADE
@@ -32545,7 +32547,7 @@ MonoBehaviour:
     - QUOTE
     - QUOTH
     - QURAN
-  - Letter: R
+  - Letter: 
     Words:
     - RAASH
     - RABAT
@@ -32818,7 +32820,7 @@ MonoBehaviour:
     - RUTIN
     - RUTTY
     - RYDER
-  - Letter: S
+  - Letter: 
     Words:
     - SAADH
     - SABAL
@@ -33740,7 +33742,7 @@ MonoBehaviour:
     - SYREN
     - SYRMA
     - SYTHE
-  - Letter: T
+  - Letter: 
     Words:
     - TABBY
     - TABER
@@ -34138,7 +34140,7 @@ MonoBehaviour:
     - TYRAN
     - TYROS
     - TYTHE
-  - Letter: U
+  - Letter: 
     Words:
     - UDDER
     - UHLAN
@@ -34258,7 +34260,7 @@ MonoBehaviour:
     - UTICA
     - UTILE
     - UTTER
-  - Letter: V
+  - Letter: 
     Words:
     - VACUA
     - VAGAL
@@ -34372,7 +34374,7 @@ MonoBehaviour:
     - VOWER
     - VOYOL
     - VULVA
-  - Letter: W
+  - Letter: 
     Words:
     - WOMEN
     - WACKE
@@ -34573,7 +34575,7 @@ MonoBehaviour:
     - WUSTE
     - WYTHE
     - WYTEN
-  - Letter: X
+  - Letter: 
     Words:
     - XEBEC
     - XENAR
@@ -34595,7 +34597,7 @@ MonoBehaviour:
     - XIPHO
     - XYSTE
     - XYSTI
-  - Letter: Y
+  - Letter: 
     Words:
     - YACCA
     - YACHT
@@ -34642,7 +34644,7 @@ MonoBehaviour:
     - YUMAS
     - YUMMY
     - YUPON
-  - Letter: Z
+  - Letter: 
     Words:
     - ZACCO
     - ZAMBO

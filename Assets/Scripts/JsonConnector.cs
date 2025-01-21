@@ -12,7 +12,7 @@ public static class JsonConnector
     private const string fileName = "TransformedWordList.json";
 
 
- 
+
     public static void LoadWordsFromJSON(Action OnComplete = null)
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
@@ -38,36 +38,45 @@ public static class JsonConnector
         OnComplete?.Invoke();
     }
 
-   
-    public static (string,List<string>) GetRandomWord()
+
+    public static string GetRandomWord()
     {
         if (_letterGroups == null || _letterGroups.Count == 0)
         {
             Debug.LogError("words list is empty or not loaded.");
-            return (string.Empty,null);
+            return string.Empty;
         }
 
         int randomLetterIndex = GetRandom(0, _letterGroups.Count);
 
-        var letterWords  = _letterGroups[randomLetterIndex].Words;
+        var letterWords = _letterGroups[randomLetterIndex].Words;
 
-        if(letterWords != null || letterWords.Count != 0)
+        if (letterWords != null || letterWords.Count != 0)
         {
             int randomindex = GetRandom(0, letterWords.Count);
-            return (letterWords[randomindex],letterWords);
+            return letterWords[randomindex];
         }
 
-        return (string.Empty, null);
+        return string.Empty;
     }
-    
 
+    public static List<string> GetSearchableWords(string initialLetter)
+    {
+        var letterGroup = _letterGroups.Find(group => group.Letter.Equals(initialLetter, StringComparison.OrdinalIgnoreCase));
+
+        if (letterGroup != null && letterGroup.Words != null && letterGroup.Words.Count > 0)
+            return letterGroup.Words;
+
+        return new List<string>();
+
+    }
     private static int GetRandom(int start, int end)
     {
         return UnityEngine.Random.Range(start, end);
     }
 }
 
-    [System.Serializable]
+[System.Serializable]
 public class LetterGroup
 {
     public string Letter; // The letter (A, B, C, etc.)

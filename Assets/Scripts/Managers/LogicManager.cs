@@ -77,6 +77,11 @@ public class LogicManager : ManagerBase
     {
         return feedback.All(f => f == ValidationType.Placed);
     }
+    //will implement AI
+    public bool IsValidWord(string guessedWord,List<string> words)
+    {
+        return words.Contains(guessedWord);
+    }
 
 
     #region Debugging
