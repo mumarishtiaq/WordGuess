@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace WordGuess
         [Range(4, 6)]
         [SerializeField] private int _wordLenght = 5;
         [SerializeField] private int _totalTries = 6;
+        [SerializeField] private List<string> _currentSearchableWords;
 
         public int WordLenght
         {
@@ -48,6 +50,7 @@ namespace WordGuess
 
         private void Awake()
         {
+
             Instance = this;
             PerformActions();
         }
@@ -66,6 +69,12 @@ namespace WordGuess
             _wordHistory = GetManager<WordHistoryManager>();
             _logic = GetManager<LogicManager>();
             _audio = GetManager<AudioManager>();
+
+            JsonConnector.LoadWordsFromJSON(() =>
+            {
+                (_targetWord, _currentSearchableWords) = JsonConnector.GetRandomWord();
+
+            });
         }
         public void ReInitialize()
         {
@@ -85,7 +94,7 @@ namespace WordGuess
                 _playArea.OnInput(key, _currentCharecterIndex);
                 _currentCharecterIndex++;
             }
-                _audio.PlayKeyBoardButtonSound();
+            _audio.PlayKeyBoardButtonSound();
 
         }
 
@@ -96,7 +105,7 @@ namespace WordGuess
                 _playArea.OnBackSpace(_currentCharecterIndex - 1);
                 _currentCharecterIndex--;
             }
-                _audio.PlayKeyBoardButtonSound();
+            _audio.PlayKeyBoardButtonSound();
         }
 
         public void OnSubmit()

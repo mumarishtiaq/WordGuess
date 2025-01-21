@@ -14,7 +14,6 @@ public class PlayingAreaManager : ManagerBase
     [SerializeField] private Color _missingColor;
     [SerializeField] private Color _placedColor;
     [SerializeField] private Color _misPlacedColor;
-    public GameObject particle;
 
     public override void ResolveReferences()
     {
@@ -44,7 +43,7 @@ public class PlayingAreaManager : ManagerBase
         return new CharacterEntity
         {
             CharTxt = t.GetComponentInChildren<TextMeshProUGUI>(),
-            Dash = t.Find("Dash")?.gameObject,
+            Dash = t.Find("Dash")?.GetComponent<Image>(),
             Validator = t.GetComponentInChildren<Image>(),
         };
     }
@@ -54,22 +53,32 @@ public class PlayingAreaManager : ManagerBase
         foreach (var ch in _characters)
         {
             ch.CharTxt.text = string.Empty;
-            ch.Dash.SetActive(true);
+            ch.Dash.gameObject.SetActive(true);
             SetValidator(ch);
+            ResetDashBlink(ch.Dash);
         }
+        DashBlink(0);
     }
 
     public void OnInput(string key, int index)
     {
         var ch = _characters[index];
         ch.CharTxt.text = key;
-        ch.Dash.SetActive(false);
+        ch.Dash.gameObject.SetActive(false);
+
+
+        DashBlink(Math.Min(index + 1, _characters.Count - 1));
     }
+
+   
     public void OnBackSpace(int index)
     {
         var ch = _characters[index];
         ch.CharTxt.text = string.Empty;
-        ch.Dash.SetActive(true);
+        ch.Dash.gameObject.SetActive(true);
+        DashBlink(index);
+        if (index < _characters.Count - 1)
+            ResetDashBlink(_characters[index + 1]?.Dash);
     }
     public string GetGuessedWord()
     {
@@ -134,8 +143,8 @@ public class PlayingAreaManager : ManagerBase
         var charectersToCopy = _charectersHolder.gameObject;
 
         var copiedCharecters = Instantiate(charectersToCopy, transform);
-        
-      
+
+
         copiedCharecters.transform.DOScale(1.05f, 1).
             OnComplete(() =>
             {
@@ -152,7 +161,7 @@ public class PlayingAreaManager : ManagerBase
                          OnComplete?.Invoke();
                          Destroy(copiedCharecters);
                      });
-               
+
             });
     }
 
@@ -160,15 +169,27 @@ public class PlayingAreaManager : ManagerBase
     {
         Vector3 worldPosition = source.position;
         var localPos = target.parent.InverseTransformPoint(worldPosition);
-        return new Vector2(localPos.x+40,localPos.y);
+        return new Vector2(localPos.x + 40, localPos.y);
     }
 
-    public void Test()
+
+    private void DashBlink(int index)
     {
-        particle.transform.position = _characters[0].CharTxt.transform.position;
-        particle.SetActive(true);
+        var blinkDash = _characters[index].Dash;
+        ResetDashBlink(blinkDash);
+        blinkDash.DOFade(0.3f, 0.5f)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.InOutSine);
     }
 
+    private void ResetDashBlink(Image dash)
+    {
+        if (dash)
+        {
+            dash.DOKill();
+            dash.DOFade(1, 0);
+        }
+    }
 }
 
 
@@ -178,7 +199,7 @@ public class PlayingAreaManager : ManagerBase
 public class CharacterEntity
 {
     public TextMeshProUGUI CharTxt;
-    public GameObject Dash;
+    public Image Dash;
     public Image Validator;
 }
 public enum ValidationType

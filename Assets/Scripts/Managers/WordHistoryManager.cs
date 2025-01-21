@@ -52,7 +52,7 @@ public class WordHistoryManager : ManagerBase
         return new CharacterEntity
         {
             CharTxt = t.GetComponentInChildren<TextMeshProUGUI>(),
-            Dash = t.Find("Dash")?.gameObject,
+            Dash = t.Find("Dash")?.GetComponent<Image>(),
             Validator = t.GetComponentInChildren<Image>(),
         };
     }
