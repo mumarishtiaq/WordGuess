@@ -12,17 +12,10 @@ public class PlayingAreaManager : ManagerBase
     [SerializeField] private Transform _charectersHolder;
     [SerializeField] private List<CharacterEntity> _characters;
 
-    //[Space]
-    //[Header("Text Colors")]
-    //[SerializeField] private Color _txtPrimaryColor;
-    //[SerializeField] private Color _txtSecondaryColor;
+    [SerializeField] private Button _submitBtn;
 
-    //[Space]
-    //[Header("Validation Colors")]
-    //[SerializeField] private Color _normalColor;
-    //[SerializeField] private Color _missingColor;
-    //[SerializeField] private Color _misPlacedColor;
-    //[SerializeField] private Color _placedColor;
+    [SerializeField] private Sprite _enableSprite;
+    [SerializeField] private Sprite _disableSprite;
 
 
     [SerializeField] private ColorPalette _palette;
@@ -42,11 +35,15 @@ public class PlayingAreaManager : ManagerBase
                 _characters.Add(GetCharecterEntity(_charectersHolder.GetChild(i)));
             }
         }
+        if (!_submitBtn)
+            _submitBtn = transform.Find("SubmitButton").GetComponent<Button>();
     }
 
     public override void PerformActions()
     {
         ResetCharecters();
+        _submitBtn.onClick.RemoveAllListeners();
+        _submitBtn.onClick.AddListener(() => WordGuess.GameManager.Instance.OnSubmit());
     }
     public override void ReInitialize()
     {
@@ -201,6 +198,25 @@ public class PlayingAreaManager : ManagerBase
         {
             dash.DOKill();
             dash.DOFade(1, 0);
+        }
+    }
+
+    public void OnValidateGuessWord(bool isValidLenght, bool isValidWord)
+    {
+        string txt = isValidLenght ? (isValidWord ? "Submit" : "Invalid") : "Submit";
+        Sprite sprite = isValidLenght && isValidWord ? _enableSprite : _disableSprite;
+
+        _submitBtn.SetButtonText(txt);
+        _submitBtn.SetSprite(sprite);
+
+        if (isValidLenght && isValidWord)
+        {
+            _submitBtn.DOKill();
+            _submitBtn.transform.DOScale(1.2f, 0.25f).
+           OnComplete(() =>
+           {
+               _submitBtn.transform.DOScale(1f, 0.2f);
+           });
         }
     }
 }

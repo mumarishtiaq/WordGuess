@@ -11,10 +11,7 @@ public class KeyboardManager : ManagerBase
     [SerializeField] private List<KeyBoardButtonEntity> _keyboardButtons;
     [SerializeField] private Button _hintBtn;
     [SerializeField] private Button _backSpaceBtn;
-    [SerializeField] private Button _submitBtn;
-
-    [SerializeField] private Sprite _enableSprite;
-    [SerializeField] private Sprite _disableSprite;
+   
 
 
 
@@ -57,8 +54,7 @@ public class KeyboardManager : ManagerBase
             }
         }
 
-        if (!_submitBtn)
-            _submitBtn = transform.Find("SubmitButton").GetComponent<Button>();
+       
 
 
 
@@ -72,7 +68,7 @@ public class KeyboardManager : ManagerBase
             kb.Button.onClick.AddListener(() => StartCoroutine(OnKeyPress(kb)));
         }
         _backSpaceBtn.onClick.AddListener(() => WordGuess.GameManager.Instance.OnBackSpace());
-        _submitBtn.onClick.AddListener(() => WordGuess.GameManager.Instance.OnSubmit());
+       
 
 
     }
@@ -93,24 +89,7 @@ public class KeyboardManager : ManagerBase
         }
     }
 
-    public void OnValidateGuessWord(bool isValidLenght, bool isValidWord)
-    {
-        string txt = isValidLenght ? (isValidWord ? "Submit" : "Invalid"): "Submit";
-        Sprite sprite = isValidLenght && isValidWord ? _enableSprite : _disableSprite;
-
-        _submitBtn.SetButtonText(txt);
-        _submitBtn.SetSprite(sprite);
-
-        if(isValidLenght && isValidWord)
-        {
-            _submitBtn.DOKill();
-            _submitBtn.transform.DOScale(1.2f, 0.25f).
-           OnComplete(() =>
-           {
-               _submitBtn.transform.DOScale(1f, 0.2f);
-           });
-        }
-    }
+   
 
 }
 

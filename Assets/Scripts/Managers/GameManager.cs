@@ -42,7 +42,6 @@ namespace WordGuess
         [SerializeField] private WordHistoryManager _wordHistory;
         [SerializeField] private LogicManager _logic;
         [SerializeField] private AudioManager _audio;
-        [SerializeField] private KeyboardManager _keyboard;
 
         private void Reset()
         {
@@ -70,7 +69,6 @@ namespace WordGuess
             _wordHistory = GetManager<WordHistoryManager>();
             _logic = GetManager<LogicManager>();
             _audio = GetManager<AudioManager>();
-            _keyboard = GetManager<KeyboardManager>();
 
             JsonConnector.LoadWordsFromJSON(() =>
             {
@@ -110,7 +108,7 @@ namespace WordGuess
 
                 isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
             }
-            _keyboard.OnValidateGuessWord(validLenght, isValid);
+            _playArea.OnValidateGuessWord(validLenght, isValid);
         }
 
         public void OnBackSpace()
