@@ -42,6 +42,7 @@ namespace WordGuess
         [SerializeField] private WordHistoryManager _wordHistory;
         [SerializeField] private LogicManager _logic;
         [SerializeField] private AudioManager _audio;
+        [SerializeField] private KeyboardManager _keyboard;
 
         private void Reset()
         {
@@ -69,6 +70,7 @@ namespace WordGuess
             _wordHistory = GetManager<WordHistoryManager>();
             _logic = GetManager<LogicManager>();
             _audio = GetManager<AudioManager>();
+            _keyboard = GetManager<KeyboardManager>();
 
             JsonConnector.LoadWordsFromJSON(() =>
             {
@@ -84,8 +86,6 @@ namespace WordGuess
             return _managers.OfType<T>().FirstOrDefault();
         }
 
-
-
         public void OnKeyPress(string key)
         {
             if (_currentCharecterIndex < _wordLenght)
@@ -95,9 +95,12 @@ namespace WordGuess
             }
             _audio.PlayKeyBoardButtonSound();
 
+            ValidateWord();
 
-            var keyboard = GetManager<KeyboardManager>();
+        }
 
+        private void ValidateWord()
+        {
             bool validLenght = _currentCharecterIndex == _wordLenght;
             bool isValid = true;
             if (validLenght)
@@ -105,12 +108,9 @@ namespace WordGuess
                 var guessedWord = _playArea.GetGuessedWord();
                 _currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
 
-               isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
+                isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
             }
-            keyboard.OnValidateGuessWord(validLenght, isValid);
-
-            
-
+            _keyboard.OnValidateGuessWord(validLenght, isValid);
         }
 
         public void OnBackSpace()
@@ -121,19 +121,8 @@ namespace WordGuess
                 _currentCharecterIndex--;
             }
             _audio.PlayKeyBoardButtonSound();
+            ValidateWord();
 
-            var keyboard = GetManager<KeyboardManager>();
-
-            bool validLenght = _currentCharecterIndex == _wordLenght;
-            bool isValid = true;
-            if (validLenght)
-            {
-                var guessedWord = _playArea.GetGuessedWord();
-                _currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
-
-                isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
-            }
-            keyboard.OnValidateGuessWord(validLenght, isValid);
         }
 
         public void OnSubmit()

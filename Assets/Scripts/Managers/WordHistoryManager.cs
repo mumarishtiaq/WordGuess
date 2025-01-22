@@ -10,6 +10,7 @@ public class WordHistoryManager : ManagerBase
     [SerializeField] private GameObject _wordTemplate;
     [SerializeField] private List<List<CharacterEntity>> _historyWords;
 
+    [SerializeField] private ColorPalette _palette;
     public override void ResolveReferences()
     {
         if (!Parent)
@@ -33,14 +34,11 @@ public class WordHistoryManager : ManagerBase
             for (int i = 0; i < numberOfTries; i++)
             {
                 var word = Instantiate(_wordTemplate, Parent);
-                var numTxt = word.GetComponentInChildren<TextMeshProUGUI>();
-                numTxt.text = (i+1) + ".";
 
-                var charectersHolder = word.transform.Find("Charecters");
                 var characters = new List<CharacterEntity>();
-                for (int j = 0; j < charectersHolder.childCount; j++)
+                for (int j = 0; j < word.transform.childCount; j++)
                 {
-                    characters.Add(GetCharecterEntity(charectersHolder.GetChild(j)));
+                    characters.Add(GetCharecterEntity(word.transform.GetChild(j)));
                 }
                 _historyWords.Add(characters);
 
@@ -52,7 +50,6 @@ public class WordHistoryManager : ManagerBase
         return new CharacterEntity
         {
             CharTxt = t.GetComponentInChildren<TextMeshProUGUI>(),
-            Dash = t.Find("Dash")?.GetComponent<Image>(),
             Validator = t.GetComponentInChildren<Image>(),
         };
     }
@@ -85,15 +82,16 @@ public class WordHistoryManager : ManagerBase
         switch (validate)
         {
             case ValidationType.Placed:
-                color = Color.green;
+                color = _palette.PlacedColor;
                 break;
             case ValidationType.MisPlaced:
-                color = Color.yellow;
+                color = _palette.MisPlacedColor;
                 break;
             case ValidationType.Missing:
-                color = Color.red;
+                color = _palette.MissingColor;
                 break;
             default:
+                color = _palette.NormalColor;
                 break;
         }
 
