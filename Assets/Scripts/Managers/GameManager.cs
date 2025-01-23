@@ -16,6 +16,7 @@ namespace WordGuess
         [SerializeField] private int _wordLenght = 5;
         [SerializeField] private int _totalTries = 6;
         [SerializeField] private List<string> _currentSearchableWords;
+        [SerializeField] private bool _isSubmitEnabled = false;
 
         public int WordLenght
         {
@@ -41,7 +42,7 @@ namespace WordGuess
         [SerializeField] private PlayingAreaManager _playArea;
         [SerializeField] private WordHistoryManager _wordHistory;
         [SerializeField] private LogicManager _logic;
-        [SerializeField] private AudioManager _audio;
+        [SerializeField] private SoundManager _audio;
 
         private void Reset()
         {
@@ -68,7 +69,7 @@ namespace WordGuess
             _playArea = GetManager<PlayingAreaManager>();
             _wordHistory = GetManager<WordHistoryManager>();
             _logic = GetManager<LogicManager>();
-            _audio = GetManager<AudioManager>();
+            _audio = GetManager<SoundManager>();
 
             JsonConnector.LoadWordsFromJSON(() =>
             {
@@ -91,7 +92,7 @@ namespace WordGuess
                 _playArea.OnInput(key, _currentCharecterIndex);
                 _currentCharecterIndex++;
             }
-            _audio.PlayKeyBoardButtonSound();
+            TriggerSound(SoundType.Keyboard);
 
             ValidateWord();
 
@@ -109,6 +110,7 @@ namespace WordGuess
                 isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
             }
             _playArea.OnValidateGuessWord(validLenght, isValid);
+            _isSubmitEnabled = validLenght && isValid;
         }
 
         public void OnBackSpace()
@@ -118,51 +120,71 @@ namespace WordGuess
                 _playArea.OnBackSpace(_currentCharecterIndex - 1);
                 _currentCharecterIndex--;
             }
-            _audio.PlayKeyBoardButtonSound();
+            TriggerSound(SoundType.Keyboard);
             ValidateWord();
 
         }
 
         public void OnSubmit()
         {
-            
-            var guessedWord = _playArea.GetGuessedWord();
-            var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
+            var soundType = _isSubmitEnabled ? SoundType.DefaultButton : SoundType.Error;
 
-            StartCoroutine(_playArea.SetFeedback(feedback, () =>
+            TriggerSound(soundType);
+
+            if (_currentCharecterIndex == _wordLenght && _isSubmitEnabled)
             {
+                _isSubmitEnabled = false;
+                var guessedWord = _playArea.GetGuessedWord();
+                var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
 
-                Debug.Log("Processing complete");
+                StartCoroutine(_playArea.SetFeedback(feedback,
+                     onIteration: () => { TriggerSound(SoundType.Feedback);},
 
+                     onComplete: () =>
+                     {
+                         if (_logic.IsValidGuess(feedback))
+                         {
+                             // win logic
+                             Debug.Log("You Win");
+                             TriggerSound(SoundType.Success);
+                         }
+                         else
+                         {
+                             _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), () =>
+                             {
+                                 _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
+                                 TriggerSound(SoundType.WordHistory);
+                                 if (_currentTry < _totalTries)
+                                     _currentTry++;
 
-
-                if (_logic.IsValidGuess(feedback))
-                {
-                    // win logic
-                    Debug.Log("You Win");
-                }
-                else
-                {
-                    _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), () =>
-                    {
-
-                        _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
-                        if (_currentTry < _totalTries)
-                            _currentTry++;
-
-                        else
-                        {
-                            Debug.Log("You lose");
-                        }
-                        _currentCharecterIndex = 0;
-                    });
-
-                }
-            }));
+                                 else
+                                 {
+                                     Debug.Log("You lose");
+                                 }
+                                 _currentCharecterIndex = 0;
+                                 _isSubmitEnabled = true;
+                             });
+                         }
+                     }));
+            }
         }
 
-
-
-
+        public void TriggerSound(SoundType soundType)
+        {
+            _audio.PlaySound(soundType);
+        }
     }
 }
+
+public enum SoundType
+{
+    None,
+    Keyboard,
+    Feedback,
+    DefaultButton,
+    WordHistory,
+    Success,
+    Error
+}
+
+

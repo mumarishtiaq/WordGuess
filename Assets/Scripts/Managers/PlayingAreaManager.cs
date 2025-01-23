@@ -6,6 +6,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WordGuess;
 
 public class PlayingAreaManager : ManagerBase
 {
@@ -95,7 +96,7 @@ public class PlayingAreaManager : ManagerBase
                           .Aggregate("", (current, next) => current + next) ?? string.Empty;
     }
 
-    public IEnumerator SetFeedback(ValidationType[] feedback, Action onComplete = null)
+    public IEnumerator SetFeedback(ValidationType[] feedback, Action onIteration = null, Action onComplete = null)
     {
         for (int i = 0; i < feedback.Length; i++)
         {
@@ -105,6 +106,7 @@ public class PlayingAreaManager : ManagerBase
 
             SetValidator(c, f);
             c.CharTxt.color = _palette.TxtSecondaryColor;
+            onIteration?.Invoke();
             yield return new WaitForSeconds(0.3f);
 
         }
@@ -159,6 +161,7 @@ public class PlayingAreaManager : ManagerBase
             OnComplete(() =>
             {
                 ResetCharecters();
+                GameManager.Instance.TriggerSound(SoundType.Feedback);
                 var rect = copiedCharecters.GetComponent<RectTransform>();
                 var targetRect = target.GetComponent<RectTransform>();
 
@@ -203,7 +206,7 @@ public class PlayingAreaManager : ManagerBase
 
     public void OnValidateGuessWord(bool isValidLenght, bool isValidWord)
     {
-        string txt = isValidLenght ? (isValidWord ? "Submit" : "Invalid") : "Submit";
+        string txt = isValidLenght ? (isValidWord ? "SUBMIT" : "INVALID") : "SUBMIT";
         Sprite sprite = isValidLenght && isValidWord ? _enableSprite : _disableSprite;
 
         _submitBtn.SetButtonText(txt);
