@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class KeyboardManager : ManagerBase
 {
     [SerializeField] private List<KeyBoardButtonEntity> _keyboardButtons;
-    [SerializeField] private Button _hintBtn;
     [SerializeField] private Button _backSpaceBtn;
    
 
@@ -31,8 +30,6 @@ public class KeyboardManager : ManagerBase
                 if (btn.name.ToLower().Contains("backspace"))
                     _backSpaceBtn = btn;
 
-                else if (btn.name.ToLower().Contains("hint"))
-                    _hintBtn = btn;
 
                 else
                 {

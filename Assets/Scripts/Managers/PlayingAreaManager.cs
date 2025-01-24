@@ -14,9 +14,12 @@ public class PlayingAreaManager : ManagerBase
     [SerializeField] private List<CharacterEntity> _characters;
 
     [SerializeField] private Button _submitBtn;
+    [SerializeField] private Button _hintBtn;
+    [SerializeField] private Button _infoBtn;
 
     [SerializeField] private Sprite _enableSprite;
     [SerializeField] private Sprite _disableSprite;
+
 
 
     [SerializeField] private ColorPalette _palette;
@@ -38,6 +41,12 @@ public class PlayingAreaManager : ManagerBase
         }
         if (!_submitBtn)
             _submitBtn = transform.Find("SubmitButton").GetComponent<Button>();
+
+        if (!_hintBtn)
+            _hintBtn = transform.Find("Hint").GetComponent<Button>();
+        
+        if (!_infoBtn)
+            _infoBtn = transform.Find("Info").GetComponent<Button>();
     }
 
     public override void PerformActions()
