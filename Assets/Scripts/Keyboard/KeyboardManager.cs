@@ -64,7 +64,7 @@ public class KeyboardManager : ManagerBase
             kb.Button.onClick.RemoveAllListeners();
             kb.Button.onClick.AddListener(() => StartCoroutine(OnKeyPress(kb)));
         }
-        _backSpaceBtn.onClick.AddListener(() => WordGuess.GameManager.Instance.OnBackSpace());
+        _backSpaceBtn.onClick.AddListener(() => WordGuess.WordGuessManager.Instance.OnBackSpace());
        
 
 
@@ -79,7 +79,7 @@ public class KeyboardManager : ManagerBase
     {
         if (!kb.IsNegativeLetter)
         {
-            WordGuess.GameManager.Instance.OnKeyPress(kb.Button.GetButtonText());
+            WordGuess.WordGuessManager.Instance.OnKeyPress(kb.Button.GetButtonText());
             kb.OperationsOnClick(true);
             yield return new WaitForSeconds(0.2f);
             kb.OperationsOnClick();

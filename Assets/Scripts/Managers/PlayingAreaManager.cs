@@ -53,7 +53,7 @@ public class PlayingAreaManager : ManagerBase
     {
         ResetCharecters();
         _submitBtn.onClick.RemoveAllListeners();
-        _submitBtn.onClick.AddListener(() => WordGuess.GameManager.Instance.OnSubmit());
+        _submitBtn.onClick.AddListener(() => WordGuess.WordGuessManager.Instance.OnSubmit());
     }
     public override void ReInitialize()
     {
@@ -170,7 +170,7 @@ public class PlayingAreaManager : ManagerBase
             OnComplete(() =>
             {
                 ResetCharecters();
-                GameManager.Instance.TriggerSound(SoundType.Feedback);
+                WordGuessManager.Instance.TriggerSound(SoundType.Feedback);
                 var rect = copiedCharecters.GetComponent<RectTransform>();
                 var targetRect = target.GetComponent<RectTransform>();
 
