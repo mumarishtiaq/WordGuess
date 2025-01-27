@@ -27,15 +27,15 @@ public class SoundManager : ManagerBase
         if (!_musicSource)
             _musicSource = transform.Find("MusicSource")?.GetComponent<AudioSource>();
     }
-    public override void PerformActions()
-    {
+    //public override void PerformActions()
+    //{
        
-    }
+    //}
 
-    public override void ReInitialize()
-    {
+    //public override void ReInitialize()
+    //{
 
-    }
+    //}
   
     public void PlaySound(SoundType _soundType)
     {

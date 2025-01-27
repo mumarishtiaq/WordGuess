@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using WordGuess;
 
-public class PlayingAreaManager : ManagerBase
+public class PlayingAreaHandler : HandlerBase
 {
     [SerializeField] private Transform _charectersHolder;
     [SerializeField] private List<CharacterEntity> _characters;
@@ -25,7 +25,7 @@ public class PlayingAreaManager : ManagerBase
     [SerializeField] private ColorPalette _palette;
 
 
-
+    [ContextMenu("Resolve References")]
     public override void ResolveReferences()
     {
         if (!_charectersHolder)
@@ -40,20 +40,20 @@ public class PlayingAreaManager : ManagerBase
             }
         }
         if (!_submitBtn)
-            _submitBtn = transform.Find("SubmitButton").GetComponent<Button>();
+            _submitBtn = transform.Find("ActionsButtons/SubmitButton").GetComponent<Button>();
 
         if (!_hintBtn)
-            _hintBtn = transform.Find("Hint").GetComponent<Button>();
+            _hintBtn = transform.Find("ActionsButtons/Hint").GetComponentInChildren<Button>();
         
         if (!_infoBtn)
-            _infoBtn = transform.Find("Info").GetComponent<Button>();
+            _infoBtn = transform.Find("ActionsButtons/Info").GetComponentInChildren<Button>();
     }
 
     public override void PerformActions()
     {
         ResetCharecters();
         _submitBtn.onClick.RemoveAllListeners();
-        _submitBtn.onClick.AddListener(() => WordGuess.WordGuessManager.Instance.OnSubmit());
+        _submitBtn.onClick.AddListener(() => GameManager.Instance.OnSubmit());
     }
     public override void ReInitialize()
     {
@@ -170,7 +170,7 @@ public class PlayingAreaManager : ManagerBase
             OnComplete(() =>
             {
                 ResetCharecters();
-                WordGuessManager.Instance.TriggerSound(SoundType.Feedback);
+                GameManager.Instance.TriggerSound(SoundType.Feedback);
                 var rect = copiedCharecters.GetComponent<RectTransform>();
                 var targetRect = target.GetComponent<RectTransform>();
 

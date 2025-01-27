@@ -6,8 +6,9 @@ using UnityEngine;
 
 namespace WordGuess
 {
-    public class WordGuessManager : MonoBehaviour
+    public class WordGuessManager : GameBase
     {
+
         public static WordGuessManager Instance;
         public int _currentCharecterIndex = 0;
         public int _currentTry = 1;
@@ -15,7 +16,6 @@ namespace WordGuess
         [Range(4, 6)]
         [SerializeField] private int _wordLenght = 5;
         [SerializeField] private int _totalTries = 6;
-        [SerializeField] private List<string> _currentSearchableWords;
         [SerializeField] private bool _isSubmitEnabled = false;
 
         public int WordLenght
@@ -35,69 +35,33 @@ namespace WordGuess
         }
 
 
+        //Handlers
+        [SerializeField] private PlayingAreaHandler _playArea;
+        [SerializeField] private WordHistoryHandler _wordHistory;
+       
 
-        [SerializeField] private ManagerBase[] _managers;
 
-        //managers
-        [SerializeField] private PlayingAreaManager _playArea;
-        [SerializeField] private WordHistoryManager _wordHistory;
-        [SerializeField] private LogicManager _logic;
-        [SerializeField] private SoundManager _audio;
-
-        private void Reset()
+        public override void SetReferences()
         {
-            ResolveReferences();
+            Instance = this;
+            base.SetReferences();
+
+            if (!_playArea)
+                _playArea = GetHandler<PlayingAreaHandler>();
+
+            if (!_wordHistory)
+                _wordHistory = GetHandler<WordHistoryHandler>();
+
+            _handlers.ToList().ForEach(manager => manager.ResolveReferences());
         }
 
-        private void Awake()
+       public override void OnGameStart()
         {
-
-            //Instance = this;
-            //PerformActions();
-        }
-        private void ResolveReferences()
-        {
-            _managers = FindObjectsOfType<ManagerBase>();
-            _managers.ToList().ForEach(manager => manager.ResolveReferences());
-        }
-
-        private void PerformActions()
-        {
+            _targetWord = JsonConnector.GetRandomWord();
             WordLenght = 5;
-            _managers.ToList().ForEach(manager => manager.PerformActions());
-
-            _playArea = GetManager<PlayingAreaManager>();
-            _wordHistory = GetManager<WordHistoryManager>();
-            _logic = GetManager<LogicManager>();
-            _audio = GetManager<SoundManager>();
-
-            JsonConnector.LoadWordsFromJSON(() =>
-            {
-                _targetWord = JsonConnector.GetRandomWord();
-            });
+            SetReferences();
+            base.OnGameStart();
         }
-        public void ReInitialize()
-        {
-            _managers.ToList().ForEach(manager => manager.ReInitialize());
-        }
-        public T GetManager<T>() where T : ManagerBase
-        {
-            return _managers.OfType<T>().FirstOrDefault();
-        }
-
-        public void OnKeyPress(string key)
-        {
-            if (_currentCharecterIndex < _wordLenght)
-            {
-                _playArea.OnInput(key, _currentCharecterIndex);
-                _currentCharecterIndex++;
-            }
-            TriggerSound(SoundType.Keyboard);
-
-            ValidateWord();
-
-        }
-
         private void ValidateWord()
         {
             bool validLenght = _currentCharecterIndex == _wordLenght;
@@ -105,55 +69,42 @@ namespace WordGuess
             if (validLenght)
             {
                 var guessedWord = _playArea.GetGuessedWord();
-                _currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
+                var currentSearchableWords = JsonConnector.GetSearchableWords(guessedWord[0].ToString());
 
-                isValid = _logic.IsValidWord(guessedWord, _currentSearchableWords);
+                isValid = Logic.IsValidWord(guessedWord, currentSearchableWords);
             }
             _playArea.OnValidateGuessWord(validLenght, isValid);
             _isSubmitEnabled = validLenght && isValid;
         }
-
-        public void OnBackSpace()
-        {
-            if (_currentCharecterIndex > 0)
-            {
-                _playArea.OnBackSpace(_currentCharecterIndex - 1);
-                _currentCharecterIndex--;
-            }
-            TriggerSound(SoundType.Keyboard);
-            ValidateWord();
-
-        }
-
-        public void OnSubmit()
+        public override void OnSubmit()
         {
             var soundType = _isSubmitEnabled ? SoundType.DefaultButton : SoundType.Error;
 
-            TriggerSound(soundType);
+            GameManager.Instance.TriggerSound(soundType);
 
             if (_currentCharecterIndex == _wordLenght && _isSubmitEnabled)
             {
                 _isSubmitEnabled = false;
                 var guessedWord = _playArea.GetGuessedWord();
-                var feedback = _logic.ValidateGuess(_targetWord, guessedWord);
+                var feedback = Logic.ValidateGuess(_targetWord, guessedWord);
 
                 StartCoroutine(_playArea.SetFeedback(feedback,
-                     onIteration: () => { TriggerSound(SoundType.Feedback);},
+                     onIteration: () => { GameManager.Instance.TriggerSound(SoundType.Feedback); },
 
                      onComplete: () =>
                      {
-                         if (_logic.IsValidGuess(feedback))
+                         if (Logic.IsValidGuess(feedback))
                          {
                              // win logic
                              Debug.Log("You Win");
-                             TriggerSound(SoundType.Success);
+                             GameManager.Instance.TriggerSound(SoundType.Success);
                          }
                          else
                          {
-                             _playArea.AnimateFeedback(_wordHistory.Parent.GetChild(_currentTry - 1), () =>
+                             _playArea.AnimateFeedback(_wordHistory.transform.GetChild(_currentTry - 1), () =>
                              {
                                  _wordHistory.SetFeedback(_currentTry - 1, guessedWord, feedback);
-                                 TriggerSound(SoundType.WordHistory);
+                                 GameManager.Instance.TriggerSound(SoundType.WordHistory);
                                  if (_currentTry < _totalTries)
                                      _currentTry++;
 
@@ -169,22 +120,31 @@ namespace WordGuess
             }
         }
 
-        public void TriggerSound(SoundType soundType)
+        public override void OnInput(string key)
         {
-            _audio.PlaySound(soundType);
+            if (_currentCharecterIndex < _wordLenght)
+            {
+                _playArea.OnInput(key, _currentCharecterIndex);
+                _currentCharecterIndex++;
+            }
+            GameManager.Instance.TriggerSound(SoundType.Keyboard);
+
+            ValidateWord();
+        }
+
+        public override void OnCancel()
+        {
+            if (_currentCharecterIndex > 0)
+            {
+                _playArea.OnBackSpace(_currentCharecterIndex - 1);
+                _currentCharecterIndex--;
+            }
+            GameManager.Instance.TriggerSound(SoundType.Keyboard);
+            ValidateWord();
         }
     }
 }
 
-public enum SoundType
-{
-    None,
-    Keyboard,
-    Feedback,
-    DefaultButton,
-    WordHistory,
-    Success,
-    Error
-}
+
 
 

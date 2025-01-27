@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,25 +6,28 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoadingManager : ManagerBase
 {
-    [SerializeField] private string _wordGuessSceneName;
-    [SerializeField] private string _wordMatchSceneName;
-    public override void PerformActions()
-    {
+    //public override void PerformActions()
+    //{
        
-    }
+    //}
 
-    public override void ReInitialize()
-    {
+    //public override void ReInitialize()
+    //{
         
-    }
+    //}
 
     public override void ResolveReferences()
     {
         
     }
 
-    public void LoadScene(int sceneIndex)
+    public void LoadScene(int sceneIndex, Action onSceneLoaded)
     {
-        SceneManager.LoadSceneAsync(sceneIndex);   
+        AsyncOperation async= SceneManager.LoadSceneAsync(sceneIndex);
+
+        async.completed += (operation) =>
+        {
+            onSceneLoaded?.Invoke();
+        };
     }
 }

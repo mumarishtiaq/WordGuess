@@ -6,18 +6,22 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class KeyboardManager : ManagerBase
+public class KeyboardManager : MonoBehaviour
 {
     [SerializeField] private List<KeyBoardButtonEntity> _keyboardButtons;
     [SerializeField] private Button _backSpaceBtn;
-   
 
 
 
+    private void Awake()
+    {
+        ResolveReferences();
+        PerformActions();
+    }
 
 
     [ContextMenu("ResolveReferences")]
-    public override void ResolveReferences()
+    public void ResolveReferences()
     {
         if (_keyboardButtons.Count == 0)
         {
@@ -57,29 +61,32 @@ public class KeyboardManager : ManagerBase
 
     }
 
-    public override void PerformActions()
+    public  void PerformActions()
     {
         foreach (var kb in _keyboardButtons)
         {
             kb.Button.onClick.RemoveAllListeners();
             kb.Button.onClick.AddListener(() => StartCoroutine(OnKeyPress(kb)));
         }
-        _backSpaceBtn.onClick.AddListener(() => WordGuess.WordGuessManager.Instance.OnBackSpace());
+        _backSpaceBtn.onClick.AddListener(() => GameManager.Instance.OnCancel());
        
 
 
     }
 
-    public override void ReInitialize()
+    public void ReInitialize()
     {
-        //TODO : code to set two negative keywords on game reinitialize
+        foreach (var btn in _keyboardButtons)
+        {
+            btn.Reset();
+        }
     }
 
     private IEnumerator OnKeyPress(KeyBoardButtonEntity kb)
     {
         if (!kb.IsNegativeLetter)
         {
-            WordGuess.WordGuessManager.Instance.OnKeyPress(kb.Button.GetButtonText());
+            GameManager.Instance.OnInput(kb.Button.GetButtonText());
             kb.OperationsOnClick(true);
             yield return new WaitForSeconds(0.2f);
             kb.OperationsOnClick();

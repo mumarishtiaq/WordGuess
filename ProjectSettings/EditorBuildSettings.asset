@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/HomeScene.unity
     guid: e99ca7ba845fc0b46adaeacc1e6c0805
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
+    path: Assets/Scenes/WordGuessScene.unity
     guid: 8fd9f71f58ce3ea4db95c4fb4b77307a
+  - enabled: 1
+    path: Assets/Scenes/WordMatchScene.unity
+    guid: 09bc62901d56676408e46879a9baa10e
   m_configObjects: {}

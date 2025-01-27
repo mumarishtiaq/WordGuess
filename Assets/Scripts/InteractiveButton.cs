@@ -44,7 +44,7 @@ public class InteractiveButton : MonoBehaviour
     private void Animate()
     {
         if (_isPlaySound)
-            WordGuessManager.Instance.TriggerSound(SoundType.DefaultButton);
+            GameManager.Instance.TriggerSound(SoundType.DefaultButton);
 
        KillTweens();
         switch (_animationType)

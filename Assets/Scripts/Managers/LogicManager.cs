@@ -12,15 +12,15 @@ public class LogicManager : ManagerBase
         
     }
 
-    public override void PerformActions()
-    {
-        //TODO : not implemented yet, may use in future implementations
+    //public override void PerformActions()
+    //{
+    //    //TODO : not implemented yet, may use in future implementations
 
-    }
-    public override void ReInitialize()
-    {
-        //TODO : not implemented yet, may use in future implementations
-    }
+    //}
+    //public override void ReInitialize()
+    //{
+    //    //TODO : not implemented yet, may use in future implementations
+    //}
     public ValidationType[] ValidateGuess(string targetWord, string guessedWord)
     {
         var feedback = new ValidationType[targetWord.Length];

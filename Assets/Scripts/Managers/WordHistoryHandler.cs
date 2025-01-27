@@ -4,17 +4,18 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WordHistoryManager : ManagerBase
+public class WordHistoryHandler : HandlerBase
 {
-    public Transform Parent;
+    //public Transform Parent;
     [SerializeField] private GameObject _wordTemplate;
     [SerializeField] private List<List<CharacterEntity>> _historyWords;
 
     [SerializeField] private ColorPalette _palette;
+
+    [ContextMenu("Resolve References")]
     public override void ResolveReferences()
     {
-        if (!Parent)
-            Parent = GameObject.Find("WordsHistory")?.transform;
+        
     }
     public override void PerformActions()
     {
@@ -27,13 +28,13 @@ public class WordHistoryManager : ManagerBase
 
     private void PopulateWordHistory(int numberOfTries)
     {
-        if(Parent && _wordTemplate)
+        if(_wordTemplate)
         {
             ClearChildren();
             _historyWords = new List<List<CharacterEntity>>();
             for (int i = 0; i < numberOfTries; i++)
             {
-                var word = Instantiate(_wordTemplate, Parent);
+                var word = Instantiate(_wordTemplate, transform);
 
                 var characters = new List<CharacterEntity>();
                 for (int j = 0; j < word.transform.childCount; j++)
@@ -101,7 +102,7 @@ public class WordHistoryManager : ManagerBase
     }
     private void ClearChildren()
     {
-        foreach (Transform c in Parent)
+        foreach (Transform c in transform)
         {
             Destroy(c.gameObject);
         }
