@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace WordGuess
 {
-    public class WordGuessManager : GameBase
+    public class WordGuessManager : SceneBase
     {
 
         public static WordGuessManager Instance;
@@ -38,21 +38,29 @@ namespace WordGuess
         //Handlers
         [SerializeField] private PlayingAreaHandler _playArea;
         [SerializeField] private WordHistoryHandler _wordHistory;
-       
 
+        private void Reset()
+        {
+            SetReferences();
+        }
+        private void Awake()
+        {
+            Instance = this;
+            OnGameStart();
+        }
 
         public override void SetReferences()
         {
-            Instance = this;
             base.SetReferences();
+
+            if (!Logic)
+                Logic = GameManager.Instance.GetManager<LogicManager>();
 
             if (!_playArea)
                 _playArea = GetHandler<PlayingAreaHandler>();
 
             if (!_wordHistory)
                 _wordHistory = GetHandler<WordHistoryHandler>();
-
-            _handlers.ToList().ForEach(manager => manager.ResolveReferences());
         }
 
        public override void OnGameStart()

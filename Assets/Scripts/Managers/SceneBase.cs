@@ -1,19 +1,49 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PopupManager : ManagerBase
+public abstract class SceneBase : MonoBehaviour
 {
     [SerializeField] private GameObject[] _popupTemplates;
     [SerializeField] protected List<PopupBase> _activePopups;
 
-    [ContextMenu("ResolveReferences")]
-    public override void ResolveReferences()
+    protected LogicManager Logic;
+    public List<HandlerBase> _handlers = new List<HandlerBase>();
+    public virtual void SetReferences()
     {
-        if (_popupTemplates.Length == 0)
+        if (_handlers.Count == 0)
+        {
+            _handlers = FindObjectsOfType<HandlerBase>().ToList();
+
+            _handlers.ToList().ForEach(handler =>
+            {
+                handler.ResolveReferences();
+                handler.SceneBase = this;
+            });
+        }
+
+        
+        if (_popupTemplates == null)
             _popupTemplates = Resources.LoadAll<GameObject>("PopupPrefabs");
     }
+    public virtual void OnGameStart()
+    {
+        _handlers.ToList().ForEach(manager => manager.PerformActions());
+        GameManager.Instance._currentGame = this;
+    }
+
+    public abstract void OnInput(string key);
+    public abstract void OnCancel();
+
+    public abstract void OnSubmit();
+
+    protected T GetHandler<T>() where T : HandlerBase
+    {
+        return _handlers.OfType<T>().FirstOrDefault();
+    }
+
 
     public void OpenPopup<T>(Action<T> onOpened = null, bool darkenBackground = false) where T : PopupBase
     {
@@ -46,9 +76,9 @@ public class PopupManager : ManagerBase
     {
         // Instantiate the popup prefab dynamically (replace with your prefab 
 
-       T prefab = _popupTemplates.
-            Select(go => go.GetComponent<T>())
-            .FirstOrDefault(component => component != null);
+        T prefab = _popupTemplates.
+             Select(go => go.GetComponent<T>())
+             .FirstOrDefault(component => component != null);
 
         var parent = GameObject.Find("Canvas").transform;
 
@@ -65,16 +95,6 @@ public class PopupManager : ManagerBase
     }
 
 
-    [ContextMenu("Test Popup")]
-    private void Test()
-    {
-        OpenPopup<SettingsPopup>(
-            popup =>
-            {
-                Debug.Log("Opened Invoke");
-                popup.OnClose.AddListener(() => Debug.Log("On Close Invoke"));
-            });
-    }
+
+
 }
-
-

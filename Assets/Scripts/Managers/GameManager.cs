@@ -6,9 +6,9 @@ using WordGuess;
 public class GameManager : MonoBehaviour
 {
    public static GameManager Instance;
-    [SerializeField] private GameBase _currentGame;
-    [Space]
-    [SerializeField] private GameBase[] _games;
+    public SceneBase _currentGame;
+    //[Space]
+    //[SerializeField] private GameBase[] _games;
     [SerializeField] private ManagerBase[] _managers;
 
     //managers
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     private void ResolveReferences()
     {
         _managers = FindObjectsOfType<ManagerBase>();
-        _games = FindObjectsOfType<GameBase>();
+        //_games = FindObjectsOfType<GameBase>();
         _managers.ToList().ForEach(manager => manager.ResolveReferences());
     }
 
@@ -55,33 +55,33 @@ public class GameManager : MonoBehaviour
         return _managers.OfType<T>().FirstOrDefault();
     }
     
-    private T GetGame<T>() where T : GameBase
-    {
-        return _games.OfType<T>().FirstOrDefault();
-    }
+    //private T GetGame<T>() where T : GameBase
+    //{
+    //    return _games.OfType<T>().FirstOrDefault();
+    //}
     public void LoadGame(GameType gameType = GameType.Home)
     {
-        switch (gameType)
-        {
-            case GameType.Home:
-                _currentGame = null;
-                break;
-            case GameType.WordGuess:
-                _currentGame = GetGame<WordGuessManager>();
-                break;
-            case GameType.WordMatch:
-                _currentGame = GetGame<WordMatchManager>();
-                break;
-            default:
-                break;
-        }
+        //switch (gameType)
+        //{
+        //    case GameType.Home:
+        //        _currentGame = null;
+        //        break;
+        //    case GameType.WordGuess:
+        //        _currentGame = GetGame<WordGuessManager>();
+        //        break;
+        //    case GameType.WordMatch:
+        //        _currentGame = GetGame<WordMatchManager>();
+        //        break;
+        //    default:
+        //        break;
+        //}
         _sceneManager.LoadScene((int)gameType, OnSceneLoaded);
 
     }
     private void OnSceneLoaded()
     {
         Debug.Log("Game started");
-        _currentGame?.OnGameStart();
+       // _currentGame?.OnGameStart();
     }
 
     public void OnInput(string k)
