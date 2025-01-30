@@ -231,6 +231,22 @@ public class PlayingAreaHandler : HandlerBase
            });
         }
     }
+
+    public string testWord = "March";
+    [ContextMenu("Hint Test")]
+    public void Hint()
+    {
+        var guessedWord = GetGuessedWord();
+        Debug.Log("Guessed Word : " + guessedWord);
+        for (int i = 0; i < guessedWord.Length; i++) 
+        {
+            if (guessedWord[i] != testWord[i] || guessedWord[i] == default)
+            {
+                Debug.Log($"Hint assigned at index {i}, wrong = {guessedWord[i]}, correct = {testWord[i]}");
+                return;
+            }
+        }
+    }
 }
 
 
@@ -249,5 +265,7 @@ public enum ValidationType
     MisPlaced,
     Missing
 }
+
+
 
 

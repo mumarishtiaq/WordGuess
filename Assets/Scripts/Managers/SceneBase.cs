@@ -9,8 +9,11 @@ public abstract class SceneBase : MonoBehaviour
     [SerializeField] private GameObject[] _popupTemplates;
     [SerializeField] protected List<PopupBase> _activePopups;
 
+    [SerializeField] private Stack<GameObject> _test;
+
     protected LogicManager Logic;
     public List<HandlerBase> _handlers = new List<HandlerBase>();
+    private Transform _canvas;
     public virtual void SetReferences()
     {
         if (_handlers.Count == 0)
@@ -24,7 +27,10 @@ public abstract class SceneBase : MonoBehaviour
             });
         }
 
-        
+        if(!_canvas)
+            _canvas = GameObject.Find("Canvas")?.transform;
+
+
         if (_popupTemplates == null)
             _popupTemplates = Resources.LoadAll<GameObject>("PopupPrefabs");
     }
@@ -80,12 +86,9 @@ public abstract class SceneBase : MonoBehaviour
              Select(go => go.GetComponent<T>())
              .FirstOrDefault(component => component != null);
 
-        var parent = GameObject.Find("Canvas").transform;
-
-
         if (prefab != null)
         {
-            T popupInstance = Instantiate(prefab, parent);
+            T popupInstance = Instantiate(prefab, _canvas);
             popupInstance.gameObject.SetActive(false);
             return popupInstance;
         }

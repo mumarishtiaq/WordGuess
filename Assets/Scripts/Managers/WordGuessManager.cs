@@ -53,8 +53,6 @@ namespace WordGuess
         {
             base.SetReferences();
 
-            if (!Logic)
-                Logic = GameManager.Instance.GetManager<LogicManager>();
 
             if (!_playArea)
                 _playArea = GetHandler<PlayingAreaHandler>();
@@ -65,6 +63,8 @@ namespace WordGuess
 
        public override void OnGameStart()
         {
+            if (!Logic)
+                Logic = GameManager.Instance.GetManager<LogicManager>();
             _targetWord = JsonConnector.GetRandomWord();
             WordLenght = 5;
             SetReferences();
@@ -149,6 +149,16 @@ namespace WordGuess
             }
             GameManager.Instance.TriggerSound(SoundType.Keyboard);
             ValidateWord();
+        }
+
+        public string testWord = "March";
+
+        
+        [ContextMenu("Hint Test")]
+        public void Hint()
+        {
+           
+           
         }
     }
 }

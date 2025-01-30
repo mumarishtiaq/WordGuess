@@ -25,7 +25,7 @@ public class InteractiveButton : MonoBehaviour
     {
         ResolveReferences();
 
-        _button.onClick.RemoveAllListeners();
+        //_button.onClick.RemoveAllListeners();
         _button.onClick.AddListener(Animate);
 
         KillTweens();
