@@ -36,4 +36,8 @@ public class WordMatchManager : SceneBase
     {
         
     }
+
+    public override void OnHint()
+    {
+    }   
 }

@@ -26,7 +26,7 @@ public class InteractiveButton : MonoBehaviour
         ResolveReferences();
 
         //_button.onClick.RemoveAllListeners();
-        _button.onClick.AddListener(Animate);
+        _button?.onClick.AddListener(Animate);
 
         KillTweens();
     }
@@ -37,7 +37,7 @@ public class InteractiveButton : MonoBehaviour
             _button = GetComponent<Button>();
         
         if(!_icon)
-            _icon = transform.Find("Icon").GetComponent<RectTransform>();
+            _icon = transform.Find("Icon")?.GetComponent<RectTransform>();
 
     }
 
@@ -74,7 +74,7 @@ public class InteractiveButton : MonoBehaviour
     /// </summary>
     private void Scale()
     {
-        _button.transform.DOScale(_scaleFactor, duration / 2)
+        _button?.transform.DOScale(_scaleFactor, duration / 2)
                     .SetEase(Ease.OutQuad)
                     .OnComplete(() =>
                     {
@@ -87,14 +87,14 @@ public class InteractiveButton : MonoBehaviour
     /// </summary>
     private void Rotate()
     {
-        _icon.DORotate(new Vector3(0, 0, -360), duration, RotateMode.FastBeyond360)
+        _icon?.DORotate(new Vector3(0, 0, -360), duration, RotateMode.FastBeyond360)
            .SetEase(Ease.OutCubic);
     }
 
     private void KillTweens()
     {
-        _button.DOKill();
-        _icon.DOKill();
+        _button?.DOKill();
+        _icon?.DOKill();
     }
 
 

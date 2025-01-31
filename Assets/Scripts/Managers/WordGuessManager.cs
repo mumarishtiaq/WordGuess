@@ -16,6 +16,7 @@ namespace WordGuess
         [Range(4, 6)]
         [SerializeField] private int _wordLenght = 5;
         [SerializeField] private int _totalTries = 6;
+        [SerializeField] private ValidationType[] _wordProgressStatus;
         [SerializeField] private bool _isSubmitEnabled = false;
 
         public int WordLenght
@@ -68,6 +69,7 @@ namespace WordGuess
             _targetWord = JsonConnector.GetRandomWord();
             WordLenght = 5;
             SetReferences();
+            _wordProgressStatus = new ValidationType[WordLenght];
             base.OnGameStart();
         }
         private void ValidateWord()
@@ -124,6 +126,7 @@ namespace WordGuess
                                  _isSubmitEnabled = true;
                              });
                          }
+                                 UpdateWordProgressStatus(feedback);
                      }));
             }
         }
@@ -151,15 +154,45 @@ namespace WordGuess
             ValidateWord();
         }
 
-        public string testWord = "March";
-
-        
-        [ContextMenu("Hint Test")]
-        public void Hint()
+        public override void OnHint()
         {
-           
-           
+            if (Logic.IsValidGuess(_wordProgressStatus))
+            {
+                Debug.Log("All words are correctly placed ");
+                return;
+            }
+            var hintIndex = 0;
+            Char hintLetter = 'a';
+            for (int i = 0; i < _wordProgressStatus.Length; i++)
+            {
+                if (_wordProgressStatus[i] != ValidationType.Placed)
+                {
+                    hintIndex = i;
+                    hintLetter = _targetWord[i];
+                    break;
+                }
+            }
+            Debug.Log($"Hint is '{hintLetter}' at index : {hintIndex}");
+            _playArea.SetHint(hintIndex,hintLetter);
+            _wordProgressStatus[hintIndex] = ValidationType.Placed;
+
         }
+        /// <summary>
+        /// this function will update the list of current progress of word, assign feedback where word is correcly placed, updates on each submit pressed
+        /// </summary>
+        /// <param name="currentFeedback">current feedback from the word guessed by the user</param>
+        private void UpdateWordProgressStatus(ValidationType[] currentFeedback)
+        {
+            for (int i = 0; i < _wordProgressStatus.Length; i++)
+            {
+                var oldState = _wordProgressStatus[i];
+                var newState = currentFeedback[i];
+                if(newState == ValidationType.Placed && oldState != ValidationType.Placed)
+                    _wordProgressStatus[i] = currentFeedback[i];
+
+            }
+        }
+
     }
 }
 

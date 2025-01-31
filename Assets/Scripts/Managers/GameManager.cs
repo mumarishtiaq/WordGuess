@@ -96,6 +96,10 @@ public class GameManager : MonoBehaviour
     {
         _currentGame.OnSubmit();
     }
+    public void OnHint()
+    {
+        _currentGame.OnHint();
+    }
 
     public void TriggerSound(SoundType soundType)
     {

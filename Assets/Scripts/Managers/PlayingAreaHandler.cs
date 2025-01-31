@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,6 +55,8 @@ public class PlayingAreaHandler : HandlerBase
         ResetCharecters();
         _submitBtn.onClick.RemoveAllListeners();
         _submitBtn.onClick.AddListener(() => GameManager.Instance.OnSubmit());
+
+        _hintBtn.onClick.AddListener(() => GameManager.Instance.OnHint());
     }
     public override void ReInitialize()
     {
@@ -68,14 +71,15 @@ public class PlayingAreaHandler : HandlerBase
         };
     }
 
-    private void ResetCharecters()
+    private void ResetCharecters(int startIndex = 0)
     {
-        foreach (var ch in _characters)
+        for (int i = startIndex; i < _characters.Count; i++)
         {
-            ch.CharTxt.text = string.Empty;
-            SetValidator(ch);
-            ResetBlink(ch.Validator);
-            ch.CharTxt.color = _palette.TxtPrimaryColor;
+            var c = _characters[i];
+            c.CharTxt.text = string.Empty;
+            SetValidator(c);
+            ResetBlink(c.Validator);
+            c.CharTxt.color = _palette.TxtPrimaryColor;
         }
         Blink(0);
     }
@@ -114,7 +118,7 @@ public class PlayingAreaHandler : HandlerBase
 
 
             SetValidator(c, f);
-            c.CharTxt.color = _palette.TxtSecondaryColor;
+            //c.CharTxt.color = _palette.TxtSecondaryColor;
             onIteration?.Invoke();
             yield return new WaitForSeconds(0.3f);
 
@@ -154,6 +158,7 @@ public class PlayingAreaHandler : HandlerBase
            {
                validator.transform.DOScale(1f, 0.3f);
            });
+            charecter.CharTxt.color = _palette.TxtSecondaryColor;
         }
         else
             validator.transform.localScale = Vector3.one;
@@ -232,20 +237,12 @@ public class PlayingAreaHandler : HandlerBase
         }
     }
 
-    public string testWord = "March";
-    [ContextMenu("Hint Test")]
-    public void Hint()
+    public void SetHint(int hintIndex , char hintLetter)
     {
-        var guessedWord = GetGuessedWord();
-        Debug.Log("Guessed Word : " + guessedWord);
-        for (int i = 0; i < guessedWord.Length; i++) 
-        {
-            if (guessedWord[i] != testWord[i] || guessedWord[i] == default)
-            {
-                Debug.Log($"Hint assigned at index {i}, wrong = {guessedWord[i]}, correct = {testWord[i]}");
-                return;
-            }
-        }
+        var ch = _characters[hintIndex];
+        ch.CharTxt.text = hintLetter.ToString();
+
+        SetValidator(_characters[hintIndex], ValidationType.Placed);
     }
 }
 

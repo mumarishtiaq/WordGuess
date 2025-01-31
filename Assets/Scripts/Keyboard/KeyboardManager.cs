@@ -128,5 +128,10 @@ public class KeyBoardButtonEntity
         Fill.SetActive(status);
         Clickpop.SetActive(status);
     }
+
+    public void SetFeedback(string key)
+    {
+
+    }
 }
 

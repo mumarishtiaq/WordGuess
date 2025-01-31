@@ -45,6 +45,8 @@ public abstract class SceneBase : MonoBehaviour
 
     public abstract void OnSubmit();
 
+    public abstract void OnHint();
+
     protected T GetHandler<T>() where T : HandlerBase
     {
         return _handlers.OfType<T>().FirstOrDefault();
