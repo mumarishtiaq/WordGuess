@@ -18,6 +18,7 @@ namespace WordGuess
         [SerializeField] private int _totalTries = 6;
         [SerializeField] private ValidationType[] _wordProgressStatus;
         [SerializeField] private bool _isSubmitEnabled = false;
+        [SerializeField] private List<int> _occupiedIndexes = new List<int>();
 
         public int WordLenght
         {
@@ -62,6 +63,7 @@ namespace WordGuess
                 _wordHistory = GetHandler<WordHistoryHandler>();
         }
 
+        [ContextMenu("Restart Game")]
        public override void OnGameStart()
         {
             if (!Logic)
@@ -70,6 +72,10 @@ namespace WordGuess
             WordLenght = 5;
             SetReferences();
             _wordProgressStatus = new ValidationType[WordLenght];
+            _occupiedIndexes = new List<int>();
+            _currentCharecterIndex = 0;
+            _currentTry = 1;
+
             base.OnGameStart();
         }
         private void ValidateWord()
@@ -108,6 +114,11 @@ namespace WordGuess
                              // win logic
                              Debug.Log("You Win");
                              GameManager.Instance.TriggerSound(SoundType.Success);
+
+                             OpenPopup<WinPopup>(popup =>
+                             {
+                                 popup.OperationsOnNext(_targetWord,ReInitializeGameSettings);
+                             });
                          }
                          else
                          {
@@ -135,6 +146,10 @@ namespace WordGuess
         {
             if (_currentCharecterIndex < _wordLenght)
             {
+                while (_currentCharecterIndex < _wordLenght && _occupiedIndexes.Contains(_currentCharecterIndex))
+                {
+                    _currentCharecterIndex++;
+                }
                 _playArea.OnInput(key, _currentCharecterIndex);
                 _currentCharecterIndex++;
             }
@@ -147,8 +162,16 @@ namespace WordGuess
         {
             if (_currentCharecterIndex > 0)
             {
-                _playArea.OnBackSpace(_currentCharecterIndex - 1);
-                _currentCharecterIndex--;
+                do
+                {
+                    _currentCharecterIndex--; 
+                }
+                while (_currentCharecterIndex > 0 && _occupiedIndexes.Contains(_currentCharecterIndex));
+
+                if (!_occupiedIndexes.Contains(_currentCharecterIndex))
+                {
+                    _playArea.OnBackSpace(_currentCharecterIndex);
+                }
             }
             GameManager.Instance.TriggerSound(SoundType.Keyboard);
             ValidateWord();
@@ -158,9 +181,18 @@ namespace WordGuess
         {
             if (Logic.IsValidGuess(_wordProgressStatus))
             {
-                Debug.Log("All words are correctly placed ");
+                //TODO : Popup or Toast
+                Debug.LogWarning("All words are correctly placed ");
                 return;
             }
+            int successCount = _wordProgressStatus.Count(c => c == ValidationType.Placed);
+            if(successCount >= WordLenght - 1)
+            {
+                //TODO : Popup or Toast
+                Debug.LogWarning("Hint Unavailable");
+                return ;
+            }
+
             var hintIndex = 0;
             Char hintLetter = 'a';
             for (int i = 0; i < _wordProgressStatus.Length; i++)
@@ -172,10 +204,11 @@ namespace WordGuess
                     break;
                 }
             }
+            _occupiedIndexes.Add(hintIndex);
             Debug.Log($"Hint is '{hintLetter}' at index : {hintIndex}");
             _playArea.SetHint(hintIndex,hintLetter);
             _wordProgressStatus[hintIndex] = ValidationType.Placed;
-
+            ValidateWord();
         }
         /// <summary>
         /// this function will update the list of current progress of word, assign feedback where word is correcly placed, updates on each submit pressed
@@ -191,6 +224,17 @@ namespace WordGuess
                     _wordProgressStatus[i] = currentFeedback[i];
 
             }
+        }
+
+        private void ReInitializeGameSettings()
+        {
+            _targetWord = JsonConnector.GetRandomWord();
+            _wordProgressStatus = new ValidationType[WordLenght];
+            _occupiedIndexes = new List<int>();
+            _currentCharecterIndex = 0;
+            _currentTry = 1;
+
+            base.OnGameStart();
         }
 
     }

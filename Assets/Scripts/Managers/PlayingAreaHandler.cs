@@ -56,6 +56,8 @@ public class PlayingAreaHandler : HandlerBase
         _submitBtn.onClick.RemoveAllListeners();
         _submitBtn.onClick.AddListener(() => GameManager.Instance.OnSubmit());
 
+        //_hintBtn.onClick.RemoveListener(() => GameManager.Instance.OnHint());
+        _hintBtn.onClick.RemoveAllListeners();  
         _hintBtn.onClick.AddListener(() => GameManager.Instance.OnHint());
     }
     public override void ReInitialize()
@@ -81,7 +83,7 @@ public class PlayingAreaHandler : HandlerBase
             ResetBlink(c.Validator);
             c.CharTxt.color = _palette.TxtPrimaryColor;
         }
-        Blink(0);
+        //Blink(0);
     }
 
     public void OnInput(string key, int index)
@@ -89,8 +91,8 @@ public class PlayingAreaHandler : HandlerBase
         var ch = _characters[index];
         ch.CharTxt.text = key;
 
-        Blink(Math.Min(index + 1, _characters.Count - 1));
-        ResetBlink(_characters[index]?.Validator);
+        //Blink(Math.Min(index + 1, _characters.Count - 1));
+        //ResetBlink(_characters[index]?.Validator);
     }
 
    
@@ -98,9 +100,9 @@ public class PlayingAreaHandler : HandlerBase
     {
         var ch = _characters[index];
         ch.CharTxt.text = string.Empty;
-        Blink(index);
-        if (index < _characters.Count - 1)
-            ResetBlink(_characters[index + 1]?.Validator);
+        //Blink(index);
+        //if (index < _characters.Count - 1)
+        //    ResetBlink(_characters[index + 1]?.Validator);
     }
     public string GetGuessedWord()
     {
@@ -209,12 +211,12 @@ public class PlayingAreaHandler : HandlerBase
                 .SetEase(Ease.InOutSine);
     }
 
-    private void ResetBlink(Image dash)
+    private void ResetBlink(Image validator)
     {
-        if (dash)
+        if (validator)
         {
-            dash.DOKill();
-            dash.DOFade(1, 0);
+            validator.DOKill();
+            validator.DOFade(1, 0);
         }
     }
 

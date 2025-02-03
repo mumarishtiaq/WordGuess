@@ -7,8 +7,7 @@ public class GameManager : MonoBehaviour
 {
    public static GameManager Instance;
     public SceneBase _currentGame;
-    //[Space]
-    //[SerializeField] private GameBase[] _games;
+    
     [SerializeField] private ManagerBase[] _managers;
 
     //managers
@@ -55,28 +54,9 @@ public class GameManager : MonoBehaviour
         return _managers.OfType<T>().FirstOrDefault();
     }
     
-    //private T GetGame<T>() where T : GameBase
-    //{
-    //    return _games.OfType<T>().FirstOrDefault();
-    //}
     public void LoadGame(GameType gameType = GameType.Home)
     {
-        //switch (gameType)
-        //{
-        //    case GameType.Home:
-        //        _currentGame = null;
-        //        break;
-        //    case GameType.WordGuess:
-        //        _currentGame = GetGame<WordGuessManager>();
-        //        break;
-        //    case GameType.WordMatch:
-        //        _currentGame = GetGame<WordMatchManager>();
-        //        break;
-        //    default:
-        //        break;
-        //}
         _sceneManager.LoadScene((int)gameType, OnSceneLoaded);
-
     }
     private void OnSceneLoaded()
     {

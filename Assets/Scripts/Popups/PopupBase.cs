@@ -27,14 +27,14 @@ public class PopupBase : MonoBehaviour
             _darkBG = transform.Find("DarkBG")?.GetComponent<Image>();
 
         if(!_closeBtn)
-            _closeBtn = _panel.Find("Close").GetComponent<Button>();
+            _closeBtn = _panel.Find("Close")?.GetComponent<Button>();
     }
     protected virtual void AddListners()
     { 
         if(_closeBtn)
         {
-            _closeBtn.onClick.RemoveAllListeners();
-            _closeBtn.onClick.AddListener(Close);
+            _closeBtn?.onClick.RemoveAllListeners();
+            _closeBtn?.onClick.AddListener(Close);
         }
             
     }
