@@ -183,7 +183,7 @@ public class PlayingAreaHandler : HandlerBase
 
                 var localPos = GetTargetPosition(targetRect, rect);
 
-                copiedCharecters.transform.DOScale(0.52f, 1);
+                copiedCharecters.transform.DOScale(0.45f, 1);
                 rect.DOLocalMove(localPos, 1).SetEase(Ease.OutBack).
                      OnComplete(() =>
                      {

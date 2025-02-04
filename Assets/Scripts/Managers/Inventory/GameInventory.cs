@@ -45,4 +45,6 @@ public class GameInventory : MonoBehaviour
         PlayerPrefs.SetInt($"{_gameKey}_Level", Level);
         PlayerPrefs.Save();
     }
+
+
 }
